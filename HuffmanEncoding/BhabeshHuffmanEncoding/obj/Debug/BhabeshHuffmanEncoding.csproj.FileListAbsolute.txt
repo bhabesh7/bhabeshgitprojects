@@ -1,0 +1,4 @@
+C:\Users\Bhabesh\Documents\Visual Studio 2010\Projects\HuffmanEncoding\BhabeshHuffmanEncoding\bin\Debug\BhabeshHuffmanEncoding.dll
+C:\Users\Bhabesh\Documents\Visual Studio 2010\Projects\HuffmanEncoding\BhabeshHuffmanEncoding\bin\Debug\BhabeshHuffmanEncoding.pdb
+C:\Users\Bhabesh\Documents\Visual Studio 2010\Projects\HuffmanEncoding\BhabeshHuffmanEncoding\obj\Debug\BhabeshHuffmanEncoding.dll
+C:\Users\Bhabesh\Documents\Visual Studio 2010\Projects\HuffmanEncoding\BhabeshHuffmanEncoding\obj\Debug\BhabeshHuffmanEncoding.pdb

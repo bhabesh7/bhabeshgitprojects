@@ -1,0 +1,16 @@
+C:\Users\Bhabesh\Documents\Visual Studio 2010\Projects\HuffmanEncoding\HuffmanEncoding\obj\x86\Release\MainWindow.g.cs
+C:\Users\Bhabesh\Documents\Visual Studio 2010\Projects\HuffmanEncoding\HuffmanEncoding\obj\x86\Release\App.g.cs
+C:\Users\Bhabesh\Documents\Visual Studio 2010\Projects\HuffmanEncoding\HuffmanEncoding\obj\x86\Release\HuffmanEncoding_MarkupCompile.cache
+C:\Users\Bhabesh\Documents\Visual Studio 2010\Projects\HuffmanEncoding\HuffmanEncoding\obj\x86\Release\HuffmanEncoding_MarkupCompile.lref
+C:\Users\Bhabesh\Documents\Visual Studio 2010\Projects\HuffmanEncoding\HuffmanEncoding\bin\Release\HuffmanEncoding.exe
+C:\Users\Bhabesh\Documents\Visual Studio 2010\Projects\HuffmanEncoding\HuffmanEncoding\bin\Release\HuffmanEncoding.pdb
+C:\Users\Bhabesh\Documents\Visual Studio 2010\Projects\HuffmanEncoding\HuffmanEncoding\obj\x86\Release\MainWindow.baml
+C:\Users\Bhabesh\Documents\Visual Studio 2010\Projects\HuffmanEncoding\HuffmanEncoding\obj\x86\Release\HuffmanEncoding.g.resources
+C:\Users\Bhabesh\Documents\Visual Studio 2010\Projects\HuffmanEncoding\HuffmanEncoding\obj\x86\Release\HuffmanEncoding.Properties.Resources.resources
+C:\Users\Bhabesh\Documents\Visual Studio 2010\Projects\HuffmanEncoding\HuffmanEncoding\obj\x86\Release\HuffmanEncoding.csproj.GenerateResource.Cache
+C:\Users\Bhabesh\Documents\Visual Studio 2010\Projects\HuffmanEncoding\HuffmanEncoding\obj\x86\Release\HuffmanEncoding.exe
+C:\Users\Bhabesh\Documents\Visual Studio 2010\Projects\HuffmanEncoding\HuffmanEncoding\obj\x86\Release\HuffmanEncoding.pdb
+C:\Users\Bhabesh\Documents\Visual Studio 2010\Projects\HuffmanEncoding\HuffmanEncoding\obj\x86\Release\HuffmanEncoding.csprojResolveAssemblyReference.cache
+C:\Users\Bhabesh\Documents\Visual Studio 2010\Projects\HuffmanEncoding\HuffmanEncoding\bin\Release\BhabeshHuffmanEncoding.dll
+C:\Users\Bhabesh\Documents\Visual Studio 2010\Projects\HuffmanEncoding\HuffmanEncoding\bin\Release\BhabeshHuffmanEncoding.pdb
+C:\Users\Bhabesh\Documents\Visual Studio 2010\Projects\HuffmanEncoding\HuffmanEncoding\obj\x86\Release\GeneratedInternalTypeHelper.g.cs

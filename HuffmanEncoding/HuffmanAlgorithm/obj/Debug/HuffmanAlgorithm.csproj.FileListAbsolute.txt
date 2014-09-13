@@ -1,0 +1,4 @@
+C:\Users\Bhabesh\Documents\Visual Studio 2010\Projects\HuffmanEncoding\HuffmanAlgorithm\bin\Debug\HuffmanAlgorithm.dll
+C:\Users\Bhabesh\Documents\Visual Studio 2010\Projects\HuffmanEncoding\HuffmanAlgorithm\bin\Debug\HuffmanAlgorithm.pdb
+C:\Users\Bhabesh\Documents\Visual Studio 2010\Projects\HuffmanEncoding\HuffmanAlgorithm\obj\Debug\HuffmanAlgorithm.dll
+C:\Users\Bhabesh\Documents\Visual Studio 2010\Projects\HuffmanEncoding\HuffmanAlgorithm\obj\Debug\HuffmanAlgorithm.pdb

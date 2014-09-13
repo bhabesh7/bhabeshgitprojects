@@ -1,0 +1,5 @@
+C:\Users\Bhabesh\Documents\Visual Studio 2010\Projects\HuffmanEncoding\BhabeshHuffmanEncoding\bin\Release\BhabeshHuffmanEncoding.dll
+C:\Users\Bhabesh\Documents\Visual Studio 2010\Projects\HuffmanEncoding\BhabeshHuffmanEncoding\bin\Release\BhabeshHuffmanEncoding.pdb
+C:\Users\Bhabesh\Documents\Visual Studio 2010\Projects\HuffmanEncoding\BhabeshHuffmanEncoding\obj\Release\BhabeshHuffmanEncoding.dll
+C:\Users\Bhabesh\Documents\Visual Studio 2010\Projects\HuffmanEncoding\BhabeshHuffmanEncoding\obj\Release\BhabeshHuffmanEncoding.pdb
+C:\Users\Bhabesh\Documents\Visual Studio 2010\Projects\HuffmanEncoding\BhabeshHuffmanEncoding\obj\Release\BhabeshHuffmanEncoding.csprojResolveAssemblyReference.cache
