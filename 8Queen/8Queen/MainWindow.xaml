@@ -1,0 +1,175 @@
+﻿<Window x:Class="_8Queen.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" SizeToContent="WidthAndHeight"
+        Title="MainWindow" Height="350" Width="525">
+    <Grid>
+        
+                
+        <!--<ItemsControl ItemsSource="{Binding CellBoard, UpdateSourceTrigger=PropertyChanged}">
+            <ItemsControl.ItemTemplate>
+                
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>-->
+        
+        <StackPanel>
+
+            <!--<ItemsControl ItemsSource="{Binding CellBoard, UpdateSourceTrigger=PropertyChanged}" Background="Pink">
+            <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Border BorderBrush="Black"  BorderThickness="1" CornerRadius="0,0,5,0" Height="20" Width="40">
+                            <TextBlock Text="{Binding Value}" VerticalAlignment="Center" HorizontalAlignment="Center">
+                            </TextBlock>
+                        </Border>
+                    </DataTemplate>
+            </ItemsControl.ItemTemplate>
+                
+                --><!--<ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <UniformGrid Columns="8"/>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>--><!--
+        </ItemsControl>-->
+
+            <ListBox ItemsSource="{Binding CellBoard[0], UpdateSourceTrigger=PropertyChanged}">
+            <ListBox.ItemTemplate>
+                <DataTemplate >
+                    <Border BorderBrush="Black"  BorderThickness="1" CornerRadius="0,0,5,0" Height="50" Width="50">
+                            <TextBlock Text="{Binding Value}" VerticalAlignment="Center" HorizontalAlignment="Center">
+                                <TextBlock.Style>
+                                    <Style TargetType="{x:Type TextBlock}">
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding .}" Value="1">
+                                                <Setter Property="Background" Value="LightGreen"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBlock.Style>
+                            </TextBlock>
+                    </Border>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+                     
+            <ListBox.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <StackPanel Orientation="Horizontal"/>
+                </ItemsPanelTemplate>
+            </ListBox.ItemsPanel>
+        </ListBox>
+
+
+            <ListBox ItemsSource="{Binding CellBoard[1], UpdateSourceTrigger=PropertyChanged}">
+                <ListBox.ItemTemplate>
+                    <DataTemplate >
+                        <Border BorderBrush="Black"  BorderThickness="1" CornerRadius="0,0,5,0" Height="50" Width="50">
+                            <TextBlock Text="{Binding Value}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                        </Border>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+
+                <ListBox.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel Orientation="Horizontal"/>
+                    </ItemsPanelTemplate>
+                </ListBox.ItemsPanel>
+            </ListBox>
+
+            <ListBox ItemsSource="{Binding CellBoard[2], UpdateSourceTrigger=PropertyChanged}">
+                <ListBox.ItemTemplate>
+                    <DataTemplate >
+                        <Border BorderBrush="Black"  BorderThickness="1" CornerRadius="0,0,5,0" Height="50" Width="50">
+                            <TextBlock Text="{Binding Value}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                        </Border>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+
+                <ListBox.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel Orientation="Horizontal"/>
+                    </ItemsPanelTemplate>
+                </ListBox.ItemsPanel>
+            </ListBox>
+
+
+            <ListBox ItemsSource="{Binding CellBoard[3], UpdateSourceTrigger=PropertyChanged}">
+                <ListBox.ItemTemplate>
+                    <DataTemplate >
+                        <Border BorderBrush="Black"  BorderThickness="1" CornerRadius="0,0,5,0" Height="50" Width="50">
+                            <TextBlock Text="{Binding Value}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                        </Border>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+
+                <ListBox.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel Orientation="Horizontal"/>
+                    </ItemsPanelTemplate>
+                </ListBox.ItemsPanel>
+            </ListBox>
+
+            <ListBox ItemsSource="{Binding CellBoard[4], UpdateSourceTrigger=PropertyChanged}">
+                <ListBox.ItemTemplate>
+                    <DataTemplate >
+                        <Border BorderBrush="Black"  BorderThickness="1" CornerRadius="0,0,5,0" Height="50" Width="50">
+                            <TextBlock Text="{Binding Value}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                        </Border>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+
+                <ListBox.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel Orientation="Horizontal"/>
+                    </ItemsPanelTemplate>
+                </ListBox.ItemsPanel>
+            </ListBox>
+
+            <ListBox ItemsSource="{Binding CellBoard[5], UpdateSourceTrigger=PropertyChanged}">
+                <ListBox.ItemTemplate>
+                    <DataTemplate >
+                        <Border BorderBrush="Black"  BorderThickness="1" CornerRadius="0,0,5,0" Height="50" Width="50">
+                            <TextBlock Text="{Binding Value}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                        </Border>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+
+                <ListBox.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel Orientation="Horizontal"/>
+                    </ItemsPanelTemplate>
+                </ListBox.ItemsPanel>
+            </ListBox>
+
+            <ListBox ItemsSource="{Binding CellBoard[6], UpdateSourceTrigger=PropertyChanged}">
+                <ListBox.ItemTemplate>
+                    <DataTemplate >
+                        <Border BorderBrush="Black"  BorderThickness="1" CornerRadius="0,0,5,0" Height="50" Width="50">
+                            <TextBlock Text="{Binding Value}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                        </Border>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+
+                <ListBox.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel Orientation="Horizontal"/>
+                    </ItemsPanelTemplate>
+                </ListBox.ItemsPanel>
+            </ListBox>
+
+            <ListBox ItemsSource="{Binding CellBoard[7], UpdateSourceTrigger=PropertyChanged}">
+                <ListBox.ItemTemplate>
+                    <DataTemplate >
+                        <Border BorderBrush="Black"  BorderThickness="1" CornerRadius="0,0,5,0" Height="50" Width="50">
+                            <TextBlock Text="{Binding Value}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                        </Border>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+
+                <ListBox.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel Orientation="Horizontal"/>
+                    </ItemsPanelTemplate>
+                </ListBox.ItemsPanel>
+            </ListBox>
+
+        </StackPanel>
+    </Grid>
+</Window>

@@ -1,0 +1,13 @@
+D:\Bhabesh\Programming\8Queen\8Queen\bin\Debug\8Queen.exe.config
+D:\Bhabesh\Programming\8Queen\8Queen\bin\Debug\8Queen.exe
+D:\Bhabesh\Programming\8Queen\8Queen\bin\Debug\8Queen.pdb
+D:\Bhabesh\Programming\8Queen\8Queen\obj\Debug\8Queen.csprojResolveAssemblyReference.cache
+D:\Bhabesh\Programming\8Queen\8Queen\obj\Debug\MainWindow.baml
+D:\Bhabesh\Programming\8Queen\8Queen\obj\Debug\MainWindow.g.cs
+D:\Bhabesh\Programming\8Queen\8Queen\obj\Debug\App.g.cs
+D:\Bhabesh\Programming\8Queen\8Queen\obj\Debug\8Queen_MarkupCompile.cache
+D:\Bhabesh\Programming\8Queen\8Queen\obj\Debug\8Queen.g.resources
+D:\Bhabesh\Programming\8Queen\8Queen\obj\Debug\_8Queen.Properties.Resources.resources
+D:\Bhabesh\Programming\8Queen\8Queen\obj\Debug\8Queen.csproj.GenerateResource.Cache
+D:\Bhabesh\Programming\8Queen\8Queen\obj\Debug\8Queen.exe
+D:\Bhabesh\Programming\8Queen\8Queen\obj\Debug\8Queen.pdb
