@@ -1,0 +1,46 @@
+﻿<Window x:Class="LuceneSearch.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"        
+        xmlns:local="clr-namespace:LuceneSearch"
+        xmlns:conv="clr-namespace:LuceneSearch.Extensibility"
+        mc:Ignorable="d"
+        Title="MainWindow" WindowState="Maximized">
+    <Grid>
+        <Grid.Resources>
+            <conv:PathToPicConverter x:Key="picConv"/>
+        </Grid.Resources>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <WrapPanel Grid.Row="0" Background="Beige">
+            <TextBox FontSize="16" Text="{Binding SearchString, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" Height="35" Width="800" Margin="5"/>
+            <Button Background="Violet" Foreground="White" Content="Search" Height="35" Width="120" Margin="5" Command="{Binding SearchCommand, UpdateSourceTrigger=PropertyChanged}"/>
+        </WrapPanel>
+
+
+        <ListBox Name="picList" Grid.Row="1" ItemsSource="{Binding SearchResultsCollection, UpdateSourceTrigger=PropertyChanged}" Padding="5" Margin="5" VirtualizingPanel.IsVirtualizing="True" VirtualizingPanel.VirtualizationMode="Recycling">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel Orientation="Vertical">
+                        <Border CornerRadius="10" BorderBrush="BlueViolet" BorderThickness="3" Margin="5">
+                            <Image Height="300" Width="400" Source="{Binding FilePath, Converter={StaticResource picConv}, UpdateSourceTrigger=PropertyChanged}"/>
+                        </Border>
+                        <TextBlock Text="{Binding FileName, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                    </StackPanel>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+            <ListBox.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <UniformGrid Columns="5"></UniformGrid>
+                </ItemsPanelTemplate>
+            </ListBox.ItemsPanel>
+        </ListBox>
+
+        <TextBlock Grid.Row="2" Text="{Binding ElementName=picList,Path=SelectedItem.FileName}"/>
+    </Grid>
+</Window>
