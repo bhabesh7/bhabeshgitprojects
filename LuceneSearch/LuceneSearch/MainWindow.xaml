@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:LuceneSearch"
         xmlns:conv="clr-namespace:LuceneSearch.Extensibility"
         mc:Ignorable="d"
-        Title="MainWindow" WindowState="Maximized">
+        Title="Scout for files" WindowState="Maximized">
     <Grid>
         <Grid.Resources>
             <conv:PathToPicConverter x:Key="picConv"/>
@@ -18,17 +18,41 @@
         </Grid.RowDefinitions>
 
         <WrapPanel Grid.Row="0" Background="Beige">
-            <TextBox FontSize="16" Text="{Binding SearchString, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" Height="35" Width="800" Margin="5"/>
-            <Button Background="Violet" Foreground="White" Content="Search" Height="35" Width="120" Margin="5" Command="{Binding SearchCommand, UpdateSourceTrigger=PropertyChanged}"/>
+            <TextBox FontSize="16" Text="{Binding SearchString, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" Width="800" Margin="5" TextChanged="TextBox_TextChanged"/>
+            <!--<Button Background="Violet" Foreground="White" Content="Search" Height="35" Width="120" Margin="5" Command="{Binding SearchCommand, UpdateSourceTrigger=PropertyChanged}"/>-->
+            <Button  Content="BuildIndex" Width="120" Margin="5" Command="{Binding BuildIndexCommand, UpdateSourceTrigger=PropertyChanged}"/>
         </WrapPanel>
 
-
-        <ListBox Name="picList" Grid.Row="1" ItemsSource="{Binding SearchResultsCollection, UpdateSourceTrigger=PropertyChanged}" Padding="5" Margin="5" VirtualizingPanel.IsVirtualizing="True" VirtualizingPanel.VirtualizationMode="Recycling">
+        <ListView Margin="10" Name="searchlst" Grid.Row="1" ItemsSource="{Binding SearchResultsCollection, UpdateSourceTrigger=PropertyChanged}" SelectedItem="{Binding SelectedSearchResult, UpdateSourceTrigger=PropertyChanged}">
+            <ListView.ContextMenu>
+                <ContextMenu MenuItem.Click="ContextMenu_Click">
+                    <MenuItem>Open Location</MenuItem>
+                </ContextMenu>                
+            </ListView.ContextMenu>
+            <ListView.View>
+                <GridView>                       
+                    <GridViewColumn  Header="FileName" Width="350" DisplayMemberBinding="{Binding FileName, UpdateSourceTrigger=PropertyChanged}">                        
+                        
+                    </GridViewColumn>
+                    <GridViewColumn Header="Ext" Width="450" DisplayMemberBinding="{Binding Extention, UpdateSourceTrigger=PropertyChanged}" />
+                    <GridViewColumn Header="Path" Width="450" DisplayMemberBinding="{Binding FilePath, UpdateSourceTrigger=PropertyChanged}" />
+                </GridView>
+            </ListView.View>
+        </ListView>
+        <!--<ListBox Name="picList" Grid.Row="1" ItemsSource="{Binding SearchResultsCollection, UpdateSourceTrigger=PropertyChanged}" Padding="5" Margin="5" VirtualizingPanel.IsVirtualizing="True" VirtualizingPanel.VirtualizationMode="Recycling">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock Text="{Binding FileName, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+           
+        </ListBox>-->
+        <!--<ListBox Name="picList" Grid.Row="1" ItemsSource="{Binding SearchResultsCollection, UpdateSourceTrigger=PropertyChanged}" Padding="5" Margin="5" VirtualizingPanel.IsVirtualizing="True" VirtualizingPanel.VirtualizationMode="Recycling">
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <StackPanel Orientation="Vertical">
                         <Border CornerRadius="10" BorderBrush="BlueViolet" BorderThickness="3" Margin="5">
-                            <Image Height="300" Width="400" Source="{Binding FilePath, Converter={StaticResource picConv}, UpdateSourceTrigger=PropertyChanged}"/>
+                            <Image Height="40" Width="40" Source="{Binding FilePath, Converter={StaticResource picConv}, UpdateSourceTrigger=PropertyChanged}"/>
                         </Border>
                         <TextBlock Text="{Binding FileName, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                     </StackPanel>
@@ -39,8 +63,8 @@
                     <UniformGrid Columns="5"></UniformGrid>
                 </ItemsPanelTemplate>
             </ListBox.ItemsPanel>
-        </ListBox>
+        </ListBox>-->
 
-        <TextBlock Grid.Row="2" Text="{Binding ElementName=picList,Path=SelectedItem.FileName}"/>
+        <TextBlock Grid.Row="2" Text="{Binding CurrentStatus}"/>
     </Grid>
 </Window>

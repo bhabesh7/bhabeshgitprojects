@@ -4,9 +4,11 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ImageFastLoader"
+        xmlns:ext="clr-namespace:LuceneSearch.Extensibility"
         mc:Ignorable="d"
         Title="MainWindow" Height="350" Width="525">
     <Window.Resources>
+        <ext:PathToPicConverter x:Key="picConv"/>
         <Style x:Key="lvStyle" TargetType="{x:Type ListView}">
             <Setter Property="VirtualizingStackPanel.IsVirtualizing" Value="True"/>
             <Setter Property="VirtualizingStackPanel.VirtualizationMode" Value="Recycling"/>
@@ -38,10 +40,10 @@
                         </GridViewColumn>
                     </GridView>-->
                     <GridView>
-                        <GridViewColumn Header="Image" Width="250">
+                        <GridViewColumn Header="Image" Width="500">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
-                                    <Image Source="{Binding Pic, UpdateSourceTrigger=PropertyChanged}"/>
+                                    <Image Margin="5" Width="400" Height="400" Source="{Binding FilePath, Converter={StaticResource picConv},  UpdateSourceTrigger=PropertyChanged}"/>
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>
@@ -70,7 +72,7 @@
         <GroupBox Grid.Row="0" Header="ItemsProvider">
             <StackPanel Orientation="Horizontal" Margin="0,2,0,0">
                 <TextBlock Text="Number of items:" Margin="5" TextAlignment="Right" VerticalAlignment="Center"/>
-                <TextBox x:Name="tbNumItems" Margin="5" Text="1000000" Width="60" VerticalAlignment="Center"/>
+                <TextBlock x:Name="tbNumItems" Margin="5" Text="{Binding ItemCount, UpdateSourceTrigger=PropertyChanged}" Width="60" VerticalAlignment="Center"/>
                 <TextBlock Text="Fetch Delay (ms):" Margin="5" TextAlignment="Right" VerticalAlignment="Center"/>
                 <TextBox x:Name="tbFetchDelay" Margin="5" Text="1000" Width="60" VerticalAlignment="Center"/>
             </StackPanel>
@@ -86,7 +88,7 @@
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" Margin="0,2,0,0">
                     <TextBlock Text="Page size:" Margin="5" TextAlignment="Right" VerticalAlignment="Center"/>
-                    <TextBox x:Name="tbPageSize" Margin="5" Text="100" Width="60" VerticalAlignment="Center"/>
+                    <TextBox x:Name="tbPageSize" Margin="5" Text="10" Width="60" VerticalAlignment="Center"/>
                     <TextBlock Text="Page timeout (s):" Margin="5" TextAlignment="Right" VerticalAlignment="Center"/>
                     <TextBox x:Name="tbPageTimeout" Margin="5" Text="30" Width="60" VerticalAlignment="Center"/>
                 </StackPanel>

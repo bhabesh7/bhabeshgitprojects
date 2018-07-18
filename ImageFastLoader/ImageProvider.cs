@@ -1,5 +1,7 @@
-﻿using System;
+﻿using ImageFastLoader.DataModel;
+using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -9,18 +11,18 @@ using System.Windows.Media.Imaging;
 
 namespace ImageFastLoader
 {
-    public class ImageProvider : IItemsProvider<Picture>
+    public class ImageProvider : IItemsProvider<DocumentData>
     {
         private readonly int _count;
         private readonly int _fetchDelay;
 
         string[] jpgFiles = null;
 
-        public ImageProvider(int numItems, int fetchDelay)
+        public ImageProvider(int fetchDelay)
         {
-            _count = numItems;
+            //_count = numItems;
             _fetchDelay = fetchDelay;
-            string path = @"C:\Bhabesh\Personal\Pics";
+            string path = ConfigurationManager.AppSettings["ImagePath"];
             jpgFiles = Directory.GetFiles(path, "*.jpg", SearchOption.TopDirectoryOnly);
             _count = jpgFiles.Length;
         }
@@ -30,28 +32,28 @@ namespace ImageFastLoader
             return _count;
         }
 
-        public IList<Picture> FetchRange(int startIndex, int count)
+        public IList<DocumentData> FetchRange(int startIndex, int count)
         {
             Stopwatch sw = new Stopwatch();
             sw.Start();
-            IList<Picture> picList = new List<Picture>();
+            IList<DocumentData> picList = new List<DocumentData>();
 
             if (startIndex + count <= _count)
             {
                 for (int i = startIndex; i < startIndex + count; i++)
                 {
-                    BitmapImage image = new BitmapImage();
-                    image.CacheOption = BitmapCacheOption.OnLoad;
-                    image.BeginInit();
-                    image.UriSource = new Uri(jpgFiles[i], UriKind.Relative);
-                    image.EndInit();
-                    image.Freeze();
-                    picList.Add(new Picture { Pic = image });
+                    //BitmapImage image = new BitmapImage();
+                    //image.CacheOption = BitmapCacheOption.OnLoad;
+                    //image.BeginInit();
+                    //image.UriSource = new Uri(jpgFiles[i], UriKind.Relative);
+                    //image.EndInit();
+                    //image.Freeze();
+                    picList.Add(new DocumentData { FilePath = jpgFiles[i], FileName = Path.GetFileName(jpgFiles[i]) });
                 }
             }
             sw.Stop();
 
-            Trace.WriteLine( string.Format("ATTN: 10 bitmapimages in {0} msec", sw.ElapsedMilliseconds));
+            Trace.WriteLine(string.Format("ATTN: {0} bitmapimages in {1} msec", count, sw.ElapsedMilliseconds));
             return picList;
         }
     }

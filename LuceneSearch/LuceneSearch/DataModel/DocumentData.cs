@@ -32,6 +32,18 @@ namespace LuceneSearch.DataModel
             }
         }
 
+        private string _extention;
+
+        public string Extention
+        {
+            get { return _extention; }
+            set
+            {
+                _extention = value;
+                RaisePropertyChanged(null, new System.ComponentModel.PropertyChangedEventArgs("Extention"));
+            }
+        }
+
         public DocumentData()
         {
             FilePath = string.Empty;

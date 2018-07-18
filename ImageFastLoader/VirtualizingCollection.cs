@@ -17,10 +17,20 @@ namespace ImageFastLoader
     /// data bound to a suitable ItemsControl.
     /// </remarks>
     /// <typeparam name="T"></typeparam>
-    public class VirtualizingCollection<T> : IList<T>, IList
+    public class VirtualizingCollection<T> : BaseNotify, IList<T>, IList
     {
-        #region Constructors
 
+        private int _itemCount;
+
+        public int ItemCount
+        {
+            get { return _itemCount; }
+            set
+            {
+                _itemCount = value;
+                RaisePropertyChanged(null, new System.ComponentModel.PropertyChangedEventArgs("ItemCount"));
+            }
+        }
         /// <summary>
         /// Initializes a new instance of the <see cref="VirtualizingCollection&lt;T&gt;"/> class.
         /// </summary>
@@ -32,6 +42,7 @@ namespace ImageFastLoader
             _itemsProvider = itemsProvider;
             _pageSize = pageSize;
             _pageTimeout = pageTimeout;
+            ItemCount = ItemsProvider.FetchCount();
         }
 
         /// <summary>
@@ -43,6 +54,7 @@ namespace ImageFastLoader
         {
             _itemsProvider = itemsProvider;
             _pageSize = pageSize;
+            ItemCount = ItemsProvider.FetchCount();
         }
 
         /// <summary>
@@ -54,7 +66,7 @@ namespace ImageFastLoader
             _itemsProvider = itemsProvider;
         }
 
-        #endregion
+
 
         #region ItemsProvider
 
@@ -73,7 +85,7 @@ namespace ImageFastLoader
 
         #region PageSize
 
-        private readonly int _pageSize = 10;
+        private int _pageSize = 10;
 
         /// <summary>
         /// Gets the size of the page.
@@ -83,6 +95,15 @@ namespace ImageFastLoader
         {
             get { return _pageSize; }
         }
+
+
+
+        //public int PageSize
+        //{
+        //    get { return _pageSize; }
+        //    set { _pageSize = value; RaisePropertyChanged(null, new System.ComponentModel.PropertyChangedEventArgs("PageSize")); }
+        //}
+
 
         #endregion
 
@@ -143,7 +164,7 @@ namespace ImageFastLoader
         public T this[int index]
         {
             get
-            {
+            {                
                 // determine which page and offset within page
                 int pageIndex = index / PageSize;
                 int pageOffset = index % PageSize;
@@ -168,6 +189,20 @@ namespace ImageFastLoader
                     if (_pages[pageIndex] == null)
                         return default(T);
                 }
+
+
+                if (!_pages.ContainsKey(pageIndex))
+                {
+                    return default(T);
+                }
+                else
+                {
+                    if (_pages[pageIndex].Count - 1 < pageOffset)
+                    {
+                        return default(T);
+                    }
+                }
+
 
                 // return requested item
                 return _pages[pageIndex][pageOffset];

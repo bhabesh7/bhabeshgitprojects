@@ -64,6 +64,7 @@
     <Compile Include="DataModel\SearchContext.cs" />
     <Compile Include="Extensibility\PathToPicConverter.cs" />
     <Compile Include="Services\Impl\FileScanner.cs" />
+    <Compile Include="Services\Impl\LucceneTest.cs" />
     <Compile Include="Services\Impl\LuceneSearchManager.cs" />
     <Compile Include="Services\Inte\IFilesScanner.cs" />
     <Compile Include="Services\Inte\ISearchManager.cs" />

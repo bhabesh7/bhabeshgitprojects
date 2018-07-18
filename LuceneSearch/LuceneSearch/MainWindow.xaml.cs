@@ -25,5 +25,29 @@ namespace LuceneSearch
             InitializeComponent();
             this.DataContext = new MainViewModel();
         }
+
+        private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            var model = (MainViewModel)this.DataContext;
+            var txBox = sender as TextBox;
+            model.SearchCommand.Execute(txBox.Text ==string.Empty ? "*:*": txBox.Text);
+        }
+
+        private void ContextMenu_Click(object sender, RoutedEventArgs e)
+        {
+            var model = (MainViewModel)this.DataContext;
+            if (model == null)
+            {
+                return;
+            }
+
+            if (model.SelectedSearchResult == null)
+            {
+                return;
+            }
+
+            System.Diagnostics.Process.Start("explorer.exe",System.IO.Path.GetDirectoryName(model.SelectedSearchResult.FilePath));
+
+        }
     }
 }

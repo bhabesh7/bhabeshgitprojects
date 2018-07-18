@@ -7,9 +7,17 @@ using System.Threading.Tasks;
 
 namespace LuceneSearch.Services.Inte
 {
+    public class EventDataArgs : EventArgs
+    {
+        public string Data;
+    }
+
     public interface ISearchManager
     {
-        bool BuildIndex(SearchContext context, IList<DocumentData> documentDataList);
+        //public delegate void IndexAddedDelegate(string doc);
+        //event IndexAddedDelegate IndexAddedEvent;
+        event EventHandler<EventDataArgs> IndexAddedEvent;
+        bool BuildIndex(SearchContext context);
         IList<DocumentData> Search(string searchString);
         
     }

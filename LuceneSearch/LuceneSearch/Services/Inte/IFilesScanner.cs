@@ -9,6 +9,6 @@ namespace LuceneSearch.Services.Inte
 {
     public interface IFilesScanner
     {
-        IList<DocumentData> GetFileListWithFullPath(string location);
+        IEnumerable<DocumentData> GetFileListWithFullPath(string location);
     }
 }
