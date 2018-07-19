@@ -16,7 +16,7 @@ using System.Configuration;
 
 namespace LuceneSearch.Services.Impl
 {
-    
+
 
     public class LuceneSearchManager : ISearchManager
     {
@@ -35,26 +35,11 @@ namespace LuceneSearch.Services.Impl
 
         }
 
-        private event EventHandler<EventDataArgs> _indexAddedEvent;
-        public event EventHandler<EventDataArgs> IndexAddedEvent
-        {
-            add
-            {
-                _indexAddedEvent += LuceneSearchManager__indexAddedEvent;
-            }
-            remove
-            {
-                _indexAddedEvent -= LuceneSearchManager__indexAddedEvent;
-            }
-        }
+        public event EventHandler<EventDataArgs> DocumentAddedEvent;
 
-        private void LuceneSearchManager__indexAddedEvent(object sender, EventDataArgs e)
-        {
-            
-        }
 
         SearchContext _searchContext = null;
-        
+
         public bool BuildIndex(SearchContext context)
         {
             _searchContext = context;
@@ -77,7 +62,7 @@ namespace LuceneSearch.Services.Impl
                             //yield return call
                             foreach (var doc in fileScanner.GetFileListWithFullPath(context.ScanPath))
                             {
-                                if(doc ==null)
+                                if (doc == null)
                                 {
                                     continue;
                                 }
@@ -86,15 +71,15 @@ namespace LuceneSearch.Services.Impl
                                 Field nameField = new Field("name", doc.FileName, Field.Store.YES, Field.Index.ANALYZED);
                                 Field extField = new Field("ext", doc.Extention, Field.Store.YES, Field.Index.NOT_ANALYZED);
                                 Field pathField = new Field("path", doc.FilePath, Field.Store.YES, Field.Index.NOT_ANALYZED);
-                                
+
                                 document.Add(nameField);
                                 document.Add(pathField);
                                 document.Add(extField);
                                 indexWriter.AddDocument(document);
-                                Trace.WriteLine(string.Format("Added {0} to Index", doc.FileName));
+                                //Trace.WriteLine(string.Format("Added {0} to Index", doc.FileName));
                                 //currStatus = string.Format("Added {0} to Index", doc.FilePath);
 
-                                //this.IndexAddedEvent?.Invoke(this, new EventDataArgs { Data = string.Format("Added {0} to Index", doc.FilePath) });
+                                DocumentAddedEvent?.Invoke(this, new EventDataArgs { Data = string.Format("Indexing: {0}", doc.FilePath) });
 
                             }
                             indexWriter.Optimize();
@@ -102,7 +87,7 @@ namespace LuceneSearch.Services.Impl
                         analyser.Close();
                     }
                 }
-                
+
                 //foreach (var doc in documentDataList)
                 //{
                 //    Document document = new Document();
@@ -141,13 +126,13 @@ namespace LuceneSearch.Services.Impl
                         var analyser = new StandardAnalyzer(Lucene.Net.Util.Version.LUCENE_30);
                         QueryParser queryParser = new QueryParser(Lucene.Net.Util.Version.LUCENE_30, "name", analyser);
                         var query = queryParser.Parse(searchString);
-                        var topDocs = indexSearcher.Search(query,10000);
+                        var topDocs = indexSearcher.Search(query, 10000);
 
                         foreach (var item in topDocs.ScoreDocs)
                         {
                             var luDoc = indexSearcher.Doc(item.Doc);
 
-                            documentDataList.Add(new DocumentData { FileName = luDoc.Get("name"), Extention=luDoc.Get("ext"), FilePath = luDoc.Get("path") });
+                            documentDataList.Add(new DocumentData { FileName = luDoc.Get("name"), Extention = luDoc.Get("ext"), FilePath = luDoc.Get("path") });
                         }
                     }
                 }

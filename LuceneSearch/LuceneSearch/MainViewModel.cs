@@ -20,6 +20,21 @@ namespace LuceneSearch
     {
         Dispatcher _dispatcher = Dispatcher.CurrentDispatcher;
 
+        private int _searchCount;
+        public int SearchCount
+        {
+            get
+            {
+                return _searchCount;
+            }
+            set
+            {
+                _searchCount = value;
+                RaisePropertyChanged(null, new System.ComponentModel.PropertyChangedEventArgs("SearchCount"));
+            }
+        }
+
+
         private string _currentStatus;
         public string CurrentStatus
         {
@@ -82,25 +97,29 @@ namespace LuceneSearch
             SearchResultsCollection = new ObservableCollection<DocumentData>();
             SearchString = "*:*";
             SearchCommand = new DelegateCommand(SearchCommand_CanExecute, SearchCommand_Execute);
-            BuildIndexCommand = new DelegateCommand((y)=> { return true; },(x) =>
-            {
-                Task.Factory.StartNew(() =>
-                {
-                    var dataLocation = ConfigurationManager.AppSettings.Get("DataLocation");
-                    var indexLocation = ConfigurationManager.AppSettings.Get("IndexLocation");
-                    
-                    Stopwatch sw = new Stopwatch();
-                    sw.Start();
-                    //_searchManager.IndexAddedEvent += _searchManager_IndexAddedEvent1; ;
-                    _searchManager.BuildIndex(new SearchContext { IndexPath = indexLocation, ScanPath = dataLocation });
-                    sw.Stop();
-                    Trace.WriteLine( string.Format("Time taken to build index {0}", sw.Elapsed.ToString()));
-                    MessageBox.Show(string.Format("Index built. Time taken to build index {0}", sw.Elapsed.ToString()));
-                });
-            });
+            BuildIndexCommand = new DelegateCommand((y) => { return true; }, (x) =>
+              {
+                  Task.Factory.StartNew(() =>
+                  {
+                      var dataLocation = ConfigurationManager.AppSettings.Get("DataLocation");
+                      var indexLocation = ConfigurationManager.AppSettings.Get("IndexLocation");
+
+                      Stopwatch sw = new Stopwatch();
+                      sw.Start();
+                    //_searchManager.IndexAddedEvent += _searchManager_IndexAddedEvent1; 
+                    _searchManager.DocumentAddedEvent += _searchManager_DocumentAddedEvent;
+                      _searchManager.BuildIndex(new SearchContext { IndexPath = indexLocation, ScanPath = dataLocation });
+                      sw.Stop();
+                      Trace.WriteLine(string.Format("Time taken to build index {0}", sw.Elapsed.ToString()));
+                      MessageBox.Show(string.Format("Index built. Time taken to build index {0}", sw.Elapsed.ToString()));
+                  });
+              });
         }
 
-       
+        private void _searchManager_DocumentAddedEvent(object sender, EventDataArgs e)
+        {
+            CurrentStatus = e?.Data;
+        }
 
         private void SearchCommand_Execute(object obj)
         {
@@ -109,14 +128,15 @@ namespace LuceneSearch
             //var res = test.Search(SearchString);
             //MessageBox.Show(res);
 
-            if(string.IsNullOrEmpty(SearchString))
+            if (string.IsNullOrEmpty(SearchString))
             {
                 return;
             }
 
             var documentDataList = _searchManager.Search(SearchString);
             SearchResultsCollection?.Clear();
-
+            if (documentDataList != null)
+                SearchCount = documentDataList.Count;
             foreach (var docData in documentDataList)
             {
                 SearchResultsCollection.Add(docData);

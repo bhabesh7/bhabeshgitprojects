@@ -6,40 +6,47 @@
         xmlns:local="clr-namespace:LuceneSearch"
         xmlns:conv="clr-namespace:LuceneSearch.Extensibility"
         mc:Ignorable="d"
-        Title="Scout for files" WindowState="Maximized">
+        Title="Yuri - Quick Search Files" WindowState="Maximized">
+
     <Grid>
-        <Grid.Resources>
-            <conv:PathToPicConverter x:Key="picConv"/>
-        </Grid.Resources>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="Auto"/>
-        </Grid.RowDefinitions>
 
-        <WrapPanel Grid.Row="0" Background="Beige">
-            <TextBox FontSize="16" Text="{Binding SearchString, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" Width="800" Margin="5" TextChanged="TextBox_TextChanged"/>
-            <!--<Button Background="Violet" Foreground="White" Content="Search" Height="35" Width="120" Margin="5" Command="{Binding SearchCommand, UpdateSourceTrigger=PropertyChanged}"/>-->
-            <Button  Content="BuildIndex" Width="120" Margin="5" Command="{Binding BuildIndexCommand, UpdateSourceTrigger=PropertyChanged}"/>
-        </WrapPanel>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
+        <Grid Grid.Column="0">
+            <Grid.Resources>
+                <conv:PathToPicConverter x:Key="picConv"/>
+            </Grid.Resources>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
 
-        <ListView Margin="10" Name="searchlst" Grid.Row="1" ItemsSource="{Binding SearchResultsCollection, UpdateSourceTrigger=PropertyChanged}" SelectedItem="{Binding SelectedSearchResult, UpdateSourceTrigger=PropertyChanged}">
-            <ListView.ContextMenu>
-                <ContextMenu MenuItem.Click="ContextMenu_Click">
-                    <MenuItem>Open Location</MenuItem>
-                </ContextMenu>                
-            </ListView.ContextMenu>
-            <ListView.View>
-                <GridView>                       
-                    <GridViewColumn  Header="FileName" Width="350" DisplayMemberBinding="{Binding FileName, UpdateSourceTrigger=PropertyChanged}">                        
-                        
-                    </GridViewColumn>
-                    <GridViewColumn Header="Ext" Width="450" DisplayMemberBinding="{Binding Extention, UpdateSourceTrigger=PropertyChanged}" />
-                    <GridViewColumn Header="Path" Width="450" DisplayMemberBinding="{Binding FilePath, UpdateSourceTrigger=PropertyChanged}" />
-                </GridView>
-            </ListView.View>
-        </ListView>
-        <!--<ListBox Name="picList" Grid.Row="1" ItemsSource="{Binding SearchResultsCollection, UpdateSourceTrigger=PropertyChanged}" Padding="5" Margin="5" VirtualizingPanel.IsVirtualizing="True" VirtualizingPanel.VirtualizationMode="Recycling">
+            <WrapPanel Grid.Row="0" Background="Beige">
+                <TextBox FontSize="16" Text="{Binding SearchString, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" Width="800" Margin="5" TextChanged="TextBox_TextChanged"/>
+                <!--<Button Background="Violet" Foreground="White" Content="Search" Height="35" Width="120" Margin="5" Command="{Binding SearchCommand, UpdateSourceTrigger=PropertyChanged}"/>-->
+                <Button  Content="BuildIndex" Width="120" Margin="5" Command="{Binding BuildIndexCommand, UpdateSourceTrigger=PropertyChanged}"/>
+            </WrapPanel>
+
+            <ListView Margin="10" Name="searchlst" Grid.Row="1" ItemsSource="{Binding SearchResultsCollection, UpdateSourceTrigger=PropertyChanged}" SelectedItem="{Binding SelectedSearchResult, UpdateSourceTrigger=PropertyChanged}">
+                <ListView.ContextMenu>
+                    <ContextMenu MenuItem.Click="ContextMenu_Click">
+                        <MenuItem>Open Location</MenuItem>
+                    </ContextMenu>
+                </ListView.ContextMenu>
+                <ListView.View>
+                    <GridView>
+                        <GridViewColumn  Header="FileName" Width="350" DisplayMemberBinding="{Binding FileName, UpdateSourceTrigger=PropertyChanged}">
+
+                        </GridViewColumn>
+                        <GridViewColumn Header="Ext" Width="450" DisplayMemberBinding="{Binding Extention, UpdateSourceTrigger=PropertyChanged}" />
+                        <GridViewColumn Header="Path" Width="450" DisplayMemberBinding="{Binding FilePath, UpdateSourceTrigger=PropertyChanged}" />
+                    </GridView>
+                </ListView.View>
+            </ListView>
+            <!--<ListBox Name="picList" Grid.Row="1" ItemsSource="{Binding SearchResultsCollection, UpdateSourceTrigger=PropertyChanged}" Padding="5" Margin="5" VirtualizingPanel.IsVirtualizing="True" VirtualizingPanel.VirtualizationMode="Recycling">
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <TextBlock Text="{Binding FileName, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
@@ -47,7 +54,7 @@
             </ListBox.ItemTemplate>
            
         </ListBox>-->
-        <!--<ListBox Name="picList" Grid.Row="1" ItemsSource="{Binding SearchResultsCollection, UpdateSourceTrigger=PropertyChanged}" Padding="5" Margin="5" VirtualizingPanel.IsVirtualizing="True" VirtualizingPanel.VirtualizationMode="Recycling">
+            <!--<ListBox Name="picList" Grid.Row="1" ItemsSource="{Binding SearchResultsCollection, UpdateSourceTrigger=PropertyChanged}" Padding="5" Margin="5" VirtualizingPanel.IsVirtualizing="True" VirtualizingPanel.VirtualizationMode="Recycling">
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <StackPanel Orientation="Vertical">
@@ -65,6 +72,32 @@
             </ListBox.ItemsPanel>
         </ListBox>-->
 
-        <TextBlock Grid.Row="2" Text="{Binding CurrentStatus}"/>
+            <Grid Grid.Row="2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Text="{Binding CurrentStatus}" Grid.Column="0"/>
+                <TextBlock Text="{Binding SearchCount}" Grid.Column="1" MinWidth="100"/>
+            </Grid>
+
+        </Grid>
+
+        <!--<Expander Grid.Column="1" ExpandDirection="Right">
+            <Expander.HeaderTemplate>
+                <DataTemplate>
+                    <TextBlock Text="Settings">
+                        <TextBlock.RenderTransform>
+                            <RotateTransform Angle="90" />
+                        </TextBlock.RenderTransform>
+                    </TextBlock>
+                </DataTemplate>
+            </Expander.HeaderTemplate>
+
+            <UniformGrid>
+                <TextBlock Text="IndexLocation" Height="30"/>
+                <TextBox Text="D:\Bhabesh" Height="30"/>
+            </UniformGrid>
+        </Expander>-->
     </Grid>
 </Window>

@@ -24,12 +24,7 @@ namespace LuceneSearch.Services.Impl
             var dirs = System.IO.Directory.EnumerateDirectories(location).ToList();
 
             foreach (var dir in dirs)
-            {
-                //var filePathList1 = System.IO.Directory.EnumerateFiles(dir).ToList();
-                //foreach (var item in filePathList1)
-                //{
-                //    documentList.Add(new DocumentData { FileName = Path.GetFileName(item), FilePath = item });
-                //}
+            {   
 
                 foreach (var item in GetFileListWithFullPath(dir))
                 {
