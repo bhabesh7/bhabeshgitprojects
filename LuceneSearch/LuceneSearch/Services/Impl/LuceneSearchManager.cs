@@ -201,7 +201,7 @@ namespace LuceneSearch.Services.Impl
                     {
                         indexWriter?.DeleteDocuments(new Term("name", fseArgs.Name));
                         indexWriter?.Optimize();
-                        DocumentAddedEvent?.Invoke(this, new EventDataArgs { Data = string.Format("File Renamed: {0}", fseArgs.FullPath) });
+                        DocumentAddedEvent?.Invoke(this, new EventDataArgs { Data = string.Format("File Deleted: {0}", fseArgs.FullPath) });
                     }
                     analyser.Close();
                 }

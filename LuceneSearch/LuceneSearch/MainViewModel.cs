@@ -98,6 +98,8 @@ namespace LuceneSearch
             SearchResultsCollection = new ObservableCollection<DocumentData>();
             SearchString = "*:*";
             SearchCommand = new DelegateCommand(SearchCommand_CanExecute, SearchCommand_Execute);
+            _searchManager.DocumentAddedEvent += _searchManager_DocumentAddedEvent;
+
             BuildIndexCommand = new DelegateCommand((y) => { return true; }, (x) =>
               {
                   Task.Factory.StartNew(() =>
@@ -108,7 +110,7 @@ namespace LuceneSearch
                       Stopwatch sw = new Stopwatch();
                       sw.Start();
                       //_searchManager.IndexAddedEvent += _searchManager_IndexAddedEvent1; 
-                      _searchManager.DocumentAddedEvent += _searchManager_DocumentAddedEvent;
+                      //_searchManager.DocumentAddedEvent += _searchManager_DocumentAddedEvent;
                       _searchManager.BuildIndex(new SearchContext { IndexPath = indexLocation, ScanPath = dataLocation });                     
                       sw.Stop();
                       Trace.WriteLine(string.Format("Time taken to build index {0}", sw.Elapsed.ToString()));
