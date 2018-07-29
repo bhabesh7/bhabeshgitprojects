@@ -13,11 +13,10 @@ using Lucene.Net.Search;
 using Lucene.Net.QueryParsers;
 using System.Diagnostics;
 using System.Configuration;
+using System.IO;
 
 namespace LuceneSearch.Services.Impl
 {
-
-
     public class LuceneSearchManager : ISearchManager
     {
         //public delegate void IndexAddedDelegate(string doc);
@@ -32,13 +31,36 @@ namespace LuceneSearch.Services.Impl
 
         public LuceneSearchManager()
         {
+            _fileScanner.FileCreatedDeletedEventHandler += _fileScanner_FileCreatedDeletedEventHandler;
+            _fileScanner.FileRenamedEventHandler += _fileScanner_FileRenamedEventHandler;
+            _fileScanner.SetupFileWatcher();
+        }
 
+        private void _fileScanner_FileRenamedEventHandler(object sender, RenamedEventArgs e)
+        {
+            RenameDocumentInIndex(e, new SearchContext { IndexPath = ConfigurationManager.AppSettings.Get("IndexLocation") });            
+        }
+
+        private void _fileScanner_FileCreatedDeletedEventHandler(object sender, FileSystemEventArgs e)
+        {
+            switch (e.ChangeType)
+            {
+                case WatcherChangeTypes.Created:
+                    AddDocumentToIndex(e.FullPath, new SearchContext { IndexPath = ConfigurationManager.AppSettings.Get("IndexLocation") });
+                    break;
+                case WatcherChangeTypes.Deleted:  
+                    DeleteDocumentInIndex(e, new SearchContext { IndexPath = ConfigurationManager.AppSettings.Get("IndexLocation") });
+                    break;
+                default:
+                    break;
+            }            
         }
 
         public event EventHandler<EventDataArgs> DocumentAddedEvent;
 
 
         SearchContext _searchContext = null;
+        IFilesScanner _fileScanner = new FileScanner();
 
         public bool BuildIndex(SearchContext context)
         {
@@ -57,10 +79,8 @@ namespace LuceneSearch.Services.Impl
                     {
                         using (var indexWriter = new IndexWriter(indexDirectory, analyser, IndexWriter.MaxFieldLength.UNLIMITED))
                         {
-                            IFilesScanner fileScanner = new FileScanner();
-
                             //yield return call
-                            foreach (var doc in fileScanner.GetFileListWithFullPath(context.ScanPath))
+                            foreach (var doc in _fileScanner.GetFileListWithFullPath(context.ScanPath))
                             {
                                 if (doc == null)
                                 {
@@ -102,14 +122,14 @@ namespace LuceneSearch.Services.Impl
                 //indexWriter.Dispose();
                 //indexDirectory.Dispose();
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return false;
 
             }
             return true;
         }
-
+        
         public IList<DocumentData> Search(string searchString)
         {
             IList<DocumentData> documentDataList = new List<DocumentData>();
@@ -142,6 +162,84 @@ namespace LuceneSearch.Services.Impl
                 Trace.WriteLine(ex.Message);
             }
             return documentDataList;
+        }
+
+        private bool RenameDocumentInIndex(RenamedEventArgs renArgs, SearchContext context)
+        {
+            using (var indexDirectory = FSDirectory.Open(context.IndexPath))
+            {
+                using (var analyser = new StandardAnalyzer(Lucene.Net.Util.Version.LUCENE_30))
+                {
+                    using (var indexWriter = new IndexWriter(indexDirectory, analyser, false, IndexWriter.MaxFieldLength.UNLIMITED))
+                    {
+                        Document doc = new Document();
+                        Field nameField = new Field("name", renArgs.Name, Field.Store.YES, Field.Index.ANALYZED);
+                        Field extField = new Field("ext",Path.GetExtension(renArgs.FullPath), Field.Store.YES, Field.Index.NOT_ANALYZED);
+                        Field pathField = new Field("path", renArgs.FullPath, Field.Store.YES, Field.Index.NOT_ANALYZED);
+                        doc.Add(nameField);
+                        doc.Add(extField);
+                        doc.Add(pathField);
+
+                        indexWriter?.UpdateDocument(new Term("name", renArgs.OldName), doc);
+                        indexWriter?.Optimize();
+                        DocumentAddedEvent?.Invoke(this, new EventDataArgs { Data = string.Format("File Renamed: {0}", renArgs.FullPath) });
+                    }
+                    analyser.Close();
+                }
+            }
+            return true;
+        }
+
+
+        private bool DeleteDocumentInIndex(FileSystemEventArgs fseArgs, SearchContext context)
+        {
+            using (var indexDirectory = FSDirectory.Open(context.IndexPath))
+            {
+                using (var analyser = new StandardAnalyzer(Lucene.Net.Util.Version.LUCENE_30))
+                {
+                    using (var indexWriter = new IndexWriter(indexDirectory, analyser, false, IndexWriter.MaxFieldLength.UNLIMITED))
+                    {
+                        indexWriter?.DeleteDocuments(new Term("name", fseArgs.Name));
+                        indexWriter?.Optimize();
+                        DocumentAddedEvent?.Invoke(this, new EventDataArgs { Data = string.Format("File Renamed: {0}", fseArgs.FullPath) });
+                    }
+                    analyser.Close();
+                }
+            }
+            return true;
+        }
+
+        public bool AddDocumentToIndex(string fullFilePath, SearchContext context)
+        {
+            using (var indexDirectory = FSDirectory.Open(context.IndexPath))
+            {
+                using (var analyser = new StandardAnalyzer(Lucene.Net.Util.Version.LUCENE_30))
+                {
+                    using (var indexWriter = new IndexWriter(indexDirectory, analyser, false, IndexWriter.MaxFieldLength.UNLIMITED))
+                    {
+                        Document document = new Document { };
+                        DocumentData doc = new DocumentData
+                        {
+                            FileName = Path.GetFileNameWithoutExtension(fullFilePath),
+                            Extention = Path.GetExtension(fullFilePath),
+                            FilePath = fullFilePath
+                        };
+
+                        Field nameField = new Field("name", doc.FileName, Field.Store.YES, Field.Index.ANALYZED);
+                        Field extField = new Field("ext", doc.Extention, Field.Store.YES, Field.Index.NOT_ANALYZED);
+                        Field pathField = new Field("path", doc.FilePath, Field.Store.YES, Field.Index.NOT_ANALYZED);
+                        document.Add(nameField);
+                        document.Add(extField);
+                        document.Add(pathField);
+                        indexWriter.AddDocument(document);
+                        indexWriter.Optimize();
+                        DocumentAddedEvent?.Invoke(this, new EventDataArgs { Data = string.Format("File Created: {0}", doc.FilePath) });
+                    }
+                    analyser.Close();
+                }
+            }
+
+            return true;
         }
     }
 }

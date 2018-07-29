@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Configuration;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -84,7 +85,7 @@ namespace LuceneSearch
             }
             set
             {
-                _selectedSearchResult = value;
+             _selectedSearchResult = value;
                 RaisePropertyChanged(this, new System.ComponentModel.PropertyChangedEventArgs("SelectedSearchResult"));
             }
         }
@@ -106,15 +107,17 @@ namespace LuceneSearch
 
                       Stopwatch sw = new Stopwatch();
                       sw.Start();
-                    //_searchManager.IndexAddedEvent += _searchManager_IndexAddedEvent1; 
-                    _searchManager.DocumentAddedEvent += _searchManager_DocumentAddedEvent;
-                      _searchManager.BuildIndex(new SearchContext { IndexPath = indexLocation, ScanPath = dataLocation });
+                      //_searchManager.IndexAddedEvent += _searchManager_IndexAddedEvent1; 
+                      _searchManager.DocumentAddedEvent += _searchManager_DocumentAddedEvent;
+                      _searchManager.BuildIndex(new SearchContext { IndexPath = indexLocation, ScanPath = dataLocation });                     
                       sw.Stop();
                       Trace.WriteLine(string.Format("Time taken to build index {0}", sw.Elapsed.ToString()));
                       MessageBox.Show(string.Format("Index built. Time taken to build index {0}", sw.Elapsed.ToString()));
                   });
               });
         }
+
+
 
         private void _searchManager_DocumentAddedEvent(object sender, EventDataArgs e)
         {
@@ -135,8 +138,10 @@ namespace LuceneSearch
 
             var documentDataList = _searchManager.Search(SearchString);
             SearchResultsCollection?.Clear();
+
             if (documentDataList != null)
                 SearchCount = documentDataList.Count;
+
             foreach (var docData in documentDataList)
             {
                 SearchResultsCollection.Add(docData);

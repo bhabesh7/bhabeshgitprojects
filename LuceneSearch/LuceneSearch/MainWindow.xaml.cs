@@ -24,6 +24,8 @@ namespace LuceneSearch
         {
             InitializeComponent();
             this.DataContext = new MainViewModel();
+
+
         }
 
         private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
