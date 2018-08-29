@@ -38,7 +38,7 @@ namespace LuceneSearch.Services.Impl
 
         private void _fileScanner_FileRenamedEventHandler(object sender, RenamedEventArgs e)
         {
-            RenameDocumentInIndex(e, new SearchContext { IndexPath = ConfigurationManager.AppSettings.Get("IndexLocation") });            
+            RenameDocumentInIndex(e, new SearchContext { IndexPath = ConfigurationManager.AppSettings.Get("IndexLocation") });
         }
 
         private void _fileScanner_FileCreatedDeletedEventHandler(object sender, FileSystemEventArgs e)
@@ -48,12 +48,12 @@ namespace LuceneSearch.Services.Impl
                 case WatcherChangeTypes.Created:
                     AddDocumentToIndex(e.FullPath, new SearchContext { IndexPath = ConfigurationManager.AppSettings.Get("IndexLocation") });
                     break;
-                case WatcherChangeTypes.Deleted:  
+                case WatcherChangeTypes.Deleted:
                     DeleteDocumentInIndex(e, new SearchContext { IndexPath = ConfigurationManager.AppSettings.Get("IndexLocation") });
                     break;
                 default:
                     break;
-            }            
+            }
         }
 
         public event EventHandler<EventDataArgs> DocumentAddedEvent;
@@ -95,7 +95,7 @@ namespace LuceneSearch.Services.Impl
                                 document.Add(nameField);
                                 document.Add(pathField);
                                 document.Add(extField);
-                                indexWriter.AddDocument(document);
+                                indexWriter?.AddDocument(document);
                                 //Trace.WriteLine(string.Format("Added {0} to Index", doc.FileName));
                                 //currStatus = string.Format("Added {0} to Index", doc.FilePath);
 
@@ -129,7 +129,7 @@ namespace LuceneSearch.Services.Impl
             }
             return true;
         }
-        
+
         public IList<DocumentData> Search(string searchString)
         {
             IList<DocumentData> documentDataList = new List<DocumentData>();
@@ -174,13 +174,15 @@ namespace LuceneSearch.Services.Impl
                     {
                         Document doc = new Document();
                         Field nameField = new Field("name", renArgs.Name, Field.Store.YES, Field.Index.ANALYZED);
-                        Field extField = new Field("ext",Path.GetExtension(renArgs.FullPath), Field.Store.YES, Field.Index.NOT_ANALYZED);
+                        Field extField = new Field("ext", Path.GetExtension(renArgs.FullPath), Field.Store.YES, Field.Index.NOT_ANALYZED);
                         Field pathField = new Field("path", renArgs.FullPath, Field.Store.YES, Field.Index.NOT_ANALYZED);
                         doc.Add(nameField);
                         doc.Add(extField);
                         doc.Add(pathField);
 
-                        indexWriter?.UpdateDocument(new Term("name", renArgs.OldName), doc);
+                        //indexWriter?.DeleteDocuments(new Term("name", renArgs.OldName.ToLower()));
+                        //indexWriter?.AddDocument(doc);
+                        indexWriter?.UpdateDocument(new Term("path", renArgs.OldFullPath), doc);
                         indexWriter?.Optimize();
                         DocumentAddedEvent?.Invoke(this, new EventDataArgs { Data = string.Format("File Renamed: {0}", renArgs.FullPath) });
                     }
@@ -199,6 +201,7 @@ namespace LuceneSearch.Services.Impl
                 {
                     using (var indexWriter = new IndexWriter(indexDirectory, analyser, false, IndexWriter.MaxFieldLength.UNLIMITED))
                     {
+                        //try query overload of DeleteDocuments
                         indexWriter?.DeleteDocuments(new Term("name", fseArgs.Name));
                         indexWriter?.Optimize();
                         DocumentAddedEvent?.Invoke(this, new EventDataArgs { Data = string.Format("File Deleted: {0}", fseArgs.FullPath) });
@@ -231,8 +234,9 @@ namespace LuceneSearch.Services.Impl
                         document.Add(nameField);
                         document.Add(extField);
                         document.Add(pathField);
-                        indexWriter.AddDocument(document);
-                        indexWriter.Optimize();
+
+                        indexWriter?.AddDocument(document);
+                        indexWriter?.Optimize();
                         DocumentAddedEvent?.Invoke(this, new EventDataArgs { Data = string.Format("File Created: {0}", doc.FilePath) });
                     }
                     analyser.Close();
