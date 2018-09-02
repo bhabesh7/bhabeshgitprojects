@@ -25,7 +25,39 @@ namespace LuceneSearch
         public ObservableCollection<NameValuePair> ConfigSettings { get; set; }
         public ObservableCollection<SearchFilterData> SearchFilterCollection { get; set; }
 
-        public ICommand ApplySearchSettingsCommand { get; set; }
+        private SearchFilterData _selectedFilterData;
+
+        public SearchFilterData SelectedSearchFilter
+        {
+            get { return _selectedFilterData; }
+            set
+            {
+                try
+                {
+                    if (SearchFilterCollection != null)
+                    {
+                        foreach (var item in SearchFilterCollection)
+                        {
+                            item.IsChecked = false;
+                        }
+                    }
+                    _selectedFilterData = value;
+                    _selectedFilterData.IsChecked = true;
+                }
+                catch (Exception ex)
+                {
+
+                }
+                finally
+                {
+                    RaisePropertyChanged(null, new System.ComponentModel.PropertyChangedEventArgs("SelectedSearchFilter"));
+                    SearchCommand_Execute(new object());
+                }
+            }
+        }
+
+
+        //public ICommand ApplySearchSettingsCommand { get; set; }
 
         public ICommand ApplyIndexSettingsCommand { get; set; }
 
@@ -112,11 +144,11 @@ namespace LuceneSearch
 
             SearchCommand = new DelegateCommand(SearchCommand_CanExecute, SearchCommand_Execute);
             _searchManager.DocumentAddedEvent += _searchManager_DocumentAddedEvent;
-            ApplySearchSettingsCommand = new DelegateCommand((y) => { return true; }, (x) =>
-            {
+            //ApplySearchSettingsCommand = new DelegateCommand((y) => { return true; }, (x) =>
+            //{
 
-                SearchCommand_Execute(new object());
-            });
+            //    SearchCommand_Execute(new object());
+            //});
             ApplyIndexSettingsCommand = new DelegateCommand((y) => { return true; }, (x) =>
             {
                 SaveSettingsRebuildIndexRefresh();
@@ -157,12 +189,12 @@ namespace LuceneSearch
                 }
 
                 //set the all filter to true
-                var allFilter = SearchFilterCollection?.FirstOrDefault();
-                allFilter.IsChecked = true;
+                SelectedSearchFilter = SearchFilterCollection?.FirstOrDefault();
+                //allFilter.IsChecked = true;
             }
             catch (Exception ex)
             {
-                CurrentStatus = ex.Message;                
+                CurrentStatus = ex.Message;
             }
             //SearchFilterCollection.Add(new SearchFilterData("ALL", ".all", true));
             //SearchFilterCollection.Add(new SearchFilterData("JPG", ".jpg", false));
