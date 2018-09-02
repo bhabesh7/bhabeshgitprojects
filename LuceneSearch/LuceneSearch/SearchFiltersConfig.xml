@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Configuration>
+  <!--ALL should be first Item. Name in CAPS and Value in small case-->
+  <SearchFilter Name="ALL" Value="all"/>
+  <SearchFilter Name="JPG" Value=".jpg"/>
+  <SearchFilter Name="PNG" Value=".png"/>
+  <SearchFilter Name="GIF" Value=".gif"/>
+  <SearchFilter Name="XLS" Value=".xls"/>
+  <SearchFilter Name="XLSX" Value=".xlsx"/>
+  <SearchFilter Name="DOC" Value=".doc"/>
+  <SearchFilter Name="DOCX" Value=".docX"/>
+  <SearchFilter Name="ODS" Value=".ods"/>
+  <SearchFilter Name="PPT" Value=".pptx"/>
+  <SearchFilter Name="PPTX" Value=".pptx"/>
+  <SearchFilter Name="SLN" Value=".sln"/>
+  <SearchFilter Name="CPP" Value=".cpp"/>
+</Configuration>

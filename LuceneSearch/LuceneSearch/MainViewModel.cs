@@ -15,6 +15,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Threading;
+using System.Xml.Linq;
 
 namespace LuceneSearch
 {
@@ -112,7 +113,7 @@ namespace LuceneSearch
             SearchCommand = new DelegateCommand(SearchCommand_CanExecute, SearchCommand_Execute);
             _searchManager.DocumentAddedEvent += _searchManager_DocumentAddedEvent;
             ApplySearchSettingsCommand = new DelegateCommand((y) => { return true; }, (x) =>
-            {  
+            {
 
                 SearchCommand_Execute(new object());
             });
@@ -130,17 +131,51 @@ namespace LuceneSearch
         private void PopulateSearchFilterSettings()
         {
             SearchFilterCollection = new ObservableCollection<SearchFilterData>();
-            SearchFilterCollection.Add(new SearchFilterData("ALL", "*:*", true));
-            SearchFilterCollection.Add(new SearchFilterData("JPG", ".jpg", false));
-            SearchFilterCollection.Add(new SearchFilterData("PNG", ".png", false));
-            SearchFilterCollection.Add(new SearchFilterData("BMP", ".bmp", false));
-            SearchFilterCollection.Add(new SearchFilterData("GIF", ".gif", false));
-            SearchFilterCollection.Add(new SearchFilterData("XLS", ".xls", false));
-            SearchFilterCollection.Add(new SearchFilterData("XLSX", ".xlsx", false));
-            SearchFilterCollection.Add(new SearchFilterData("DOC", ".doc", false));
-            SearchFilterCollection.Add(new SearchFilterData("DOCX", ".docx", false));
-            SearchFilterCollection.Add(new SearchFilterData("PPT", ".ppt", false));
-            SearchFilterCollection.Add(new SearchFilterData("VS SLN", ".sln", false));
+
+            try
+            {
+                XElement xElement = XElement.Load("SearchFiltersConfig.xml");
+                var searchFilters = xElement.Elements();
+
+                foreach (var filter in searchFilters)
+                {
+                    var nameAttr = filter.Attributes().FirstOrDefault((x) => x.Name == "Name");
+                    if (nameAttr == null)
+                    {
+                        continue;
+                    }
+                    var name = nameAttr?.Value;
+
+                    var valAttr = filter.Attributes().FirstOrDefault((x) => x.Name == "Value");
+                    if (valAttr == null)
+                    {
+                        continue;
+                    }
+                    var value = valAttr?.Value;
+
+                    SearchFilterCollection?.Add(new SearchFilterData(name, value, false));
+                }
+
+                //set the all filter to true
+                var allFilter = SearchFilterCollection?.FirstOrDefault();
+                allFilter.IsChecked = true;
+            }
+            catch (Exception ex)
+            {
+                CurrentStatus = ex.Message;                
+            }
+            //SearchFilterCollection.Add(new SearchFilterData("ALL", ".all", true));
+            //SearchFilterCollection.Add(new SearchFilterData("JPG", ".jpg", false));
+            //SearchFilterCollection.Add(new SearchFilterData("PNG", ".png", false));
+            //SearchFilterCollection.Add(new SearchFilterData("BMP", ".bmp", false));
+            //SearchFilterCollection.Add(new SearchFilterData("GIF", ".gif", false));
+            //SearchFilterCollection.Add(new SearchFilterData("XLS", ".xls", false));
+            //SearchFilterCollection.Add(new SearchFilterData("XLSX", ".xlsx", false));
+            //SearchFilterCollection.Add(new SearchFilterData("DOC", ".doc", false));
+            //SearchFilterCollection.Add(new SearchFilterData("DOCX", ".docx", false));
+            //SearchFilterCollection.Add(new SearchFilterData("PPT", ".ppt", false));
+            //SearchFilterCollection.Add(new SearchFilterData("SLN", ".sln", false));
+            //SearchFilterCollection.Add(new SearchFilterData("ODS", ".ods", false));
         }
 
         /// <summary>

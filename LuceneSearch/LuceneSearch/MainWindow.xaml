@@ -79,7 +79,7 @@
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
                 <TextBlock Text="{Binding CurrentStatus}" Grid.Column="0"/>
-                <TextBlock Text="{Binding SearchCount}" Grid.Column="1" MinWidth="100"/>
+                <TextBlock Text="{Binding SearchCount}" FontWeight="DemiBold" Grid.Column="1" MinWidth="100"/>
             </Grid>
 
         </Grid>
@@ -102,32 +102,34 @@
                     </Grid.RowDefinitions>
 
                     <GroupBox Header="Configuration" Grid.Row="0" Margin="5" Padding="5">
-                        <StackPanel>
-                            <ListView ItemsSource="{Binding ConfigSettings}" MinHeight="150" Margin="5">
-                                <ListView.View>
-                                    <GridView>
-                                        <GridViewColumn Header="Name" Width="100" DisplayMemberBinding="{Binding Name}"></GridViewColumn>
+                        <ScrollViewer>
+                            <StackPanel>
+                                <ListView ItemsSource="{Binding ConfigSettings}" MinHeight="150" Margin="5">
+                                    <ListView.View>
+                                        <GridView>
+                                            <GridViewColumn Header="Name" Width="100" DisplayMemberBinding="{Binding Name}"></GridViewColumn>
 
-                                        <GridViewColumn Header="Value" Width="140">
-                                            <GridViewColumn.CellTemplate>
-                                                <DataTemplate>
-                                                    <TextBox Text="{Binding Value, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" Width="120" HorizontalAlignment="Center"/>
-                                                </DataTemplate>
-                                            </GridViewColumn.CellTemplate>
-                                        </GridViewColumn>
-                                    </GridView>
-                                </ListView.View>
-                            </ListView>
-                            <Button Margin="5" 
+                                            <GridViewColumn Header="Value" Width="140">
+                                                <GridViewColumn.CellTemplate>
+                                                    <DataTemplate>
+                                                        <TextBox Text="{Binding Value, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" Width="120" HorizontalAlignment="Center"/>
+                                                    </DataTemplate>
+                                                </GridViewColumn.CellTemplate>
+                                            </GridViewColumn>
+                                        </GridView>
+                                    </ListView.View>
+                                </ListView>
+                                <Button Margin="5" 
                                     Content="Save" Width="80" HorizontalAlignment="Right"
                                     Command="{Binding ElementName=yuriWin,Path=DataContext.ApplyIndexSettingsCommand}"/>
-                        </StackPanel>
+                            </StackPanel>
+                        </ScrollViewer>
                     </GroupBox>
 
                     <GroupBox Header="Search Settings" Grid.Row="1" Margin="5" Padding="5">
                         <ScrollViewer>
                             <StackPanel>
-                                <ListView ItemsSource="{Binding SearchFilterCollection}" MaxHeight="150">
+                                <ListView ItemsSource="{Binding SearchFilterCollection}" MaxHeight="150" Margin="5">
                                     <ListView.View>
                                         <GridView>
                                             <GridViewColumn Header="Name" Width="100" DisplayMemberBinding="{Binding Name}"></GridViewColumn>
