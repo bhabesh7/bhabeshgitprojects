@@ -110,7 +110,7 @@ namespace LuceneSearch.Services.Impl
 
                 DocumentAddedEvent?.Invoke(this, new EventDataArgs { Data = "Indexing Complete !!" });
 
-              
+
             }
             catch (Exception ex)
             {
@@ -122,7 +122,48 @@ namespace LuceneSearch.Services.Impl
             return true;
         }
 
-        public IList<DocumentData> Search(string searchString)
+
+        string[] field = { "name", "ext", "path" };
+
+        /// <summary>
+        /// Returns search query filter for lucene to lookup documents based on extension
+        /// </summary>
+        /// <param name="searchContext"></param>
+        /// <returns></returns>
+        private QueryWrapperFilter CreateLuceneSearchFilter(SearchContext searchContext)
+        {
+            QueryWrapperFilter filter = null;
+
+            if (searchContext == null)
+            {
+                return null;
+            }
+
+            var matchedExtFilter = searchContext.SearchFilterDataList.FirstOrDefault((c) => c.Name.ToLower() != "all" && c.IsChecked);
+
+            if (matchedExtFilter != null)
+            {
+                filter = new QueryWrapperFilter(new TermQuery(new Term("ext", matchedExtFilter.Filter)));
+                return filter;
+            }
+
+            var matchedAllFilter = searchContext.SearchFilterDataList.FirstOrDefault((c) => c.Name.ToLower() == "all" && c.IsChecked);
+
+            if (matchedAllFilter != null)
+            {
+                //return a null filter to match all extensions
+                return filter;
+            }           
+
+            return filter;
+        }
+
+        /// <summary>
+        /// Searches the lucene index with advanced query filters
+        /// </summary>
+        /// <param name="searchContext"></param>
+        /// <returns></returns>
+        public IList<DocumentData> Search(SearchContext searchContext)
         {
             IList<DocumentData> documentDataList = new List<DocumentData>();
             try
@@ -130,19 +171,24 @@ namespace LuceneSearch.Services.Impl
                 //var indexdirectory = FSDirectory.Open(_searchContext.IndexPath);
                 //_indexSearcher = new IndexSearcher(indexdirectory);
 
-                var indexLocation = ConfigurationManager.AppSettings.Get("IndexLocation");
+                var indexLocation = searchContext.IndexPath;
                 using (var indexDirectory = FSDirectory.Open(indexLocation))
                 {
                     using (var indexSearcher = new IndexSearcher(indexDirectory))
                     {
                         var analyser = new StandardAnalyzer(Lucene.Net.Util.Version.LUCENE_30);
                         QueryParser queryParser = new QueryParser(Lucene.Net.Util.Version.LUCENE_30, "name", analyser);
-                        var query = queryParser.Parse(searchString);
+                        var query = queryParser.Parse(searchContext.SearchString);
 
                         int searchHitCount = 1000;//default
                         int.TryParse(ConfigurationManager.AppSettings["SearchHitCount"], out searchHitCount);
 
-                        var topDocs = indexSearcher.Search(query, searchHitCount);
+                        //var topDocs = indexSearcher.Search(query, searchHitCount);
+                        //string[] field = { "name", "ext", "path" };
+                        //var filter = new QueryWrapperFilter(new TermQuery(new Term("ext", ".jpg")));
+
+                        var filter = CreateLuceneSearchFilter(searchContext);
+                        var topDocs = indexSearcher.Search(query, filter, searchHitCount);
 
                         foreach (var item in topDocs.ScoreDocs)
                         {

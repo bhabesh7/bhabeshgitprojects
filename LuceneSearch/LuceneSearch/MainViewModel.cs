@@ -22,10 +22,11 @@ namespace LuceneSearch
     {
         SynchronizationContext _synchronizationContext = SynchronizationContext.Current;
         public ObservableCollection<NameValuePair> ConfigSettings { get; set; }
+        public ObservableCollection<SearchFilterData> SearchFilterCollection { get; set; }
 
+        public ICommand ApplySearchSettingsCommand { get; set; }
 
-
-        public ICommand SaveSettingsCommand { get; set; }
+        public ICommand ApplyIndexSettingsCommand { get; set; }
 
 
         private int _searchCount;
@@ -104,20 +105,44 @@ namespace LuceneSearch
         {
             SearchResultsCollection = new ObservableCollection<DocumentData>();
             SearchString = "*:*";
+            PopulateSearchFilterSettings();
+
+            FetchAppConfigSettings();
+
             SearchCommand = new DelegateCommand(SearchCommand_CanExecute, SearchCommand_Execute);
             _searchManager.DocumentAddedEvent += _searchManager_DocumentAddedEvent;
-            ConfigSettings = new ObservableCollection<NameValuePair>();
-            FetchAppConfigSettings();
-            SaveSettingsCommand = new DelegateCommand((y) => { return true; }, (x) =>
-             {
-                 SaveSettingsRebuildIndexRefresh();
-             });
+            ApplySearchSettingsCommand = new DelegateCommand((y) => { return true; }, (x) =>
+            {  
+
+                SearchCommand_Execute(new object());
+            });
+            ApplyIndexSettingsCommand = new DelegateCommand((y) => { return true; }, (x) =>
+            {
+                SaveSettingsRebuildIndexRefresh();
+            });
 
             BuildIndexCommand = new DelegateCommand((y) => { return true; }, (x) =>
             {
                 BuildIndex();
             });
         }
+
+        private void PopulateSearchFilterSettings()
+        {
+            SearchFilterCollection = new ObservableCollection<SearchFilterData>();
+            SearchFilterCollection.Add(new SearchFilterData("ALL", "*:*", true));
+            SearchFilterCollection.Add(new SearchFilterData("JPG", ".jpg", false));
+            SearchFilterCollection.Add(new SearchFilterData("PNG", ".png", false));
+            SearchFilterCollection.Add(new SearchFilterData("BMP", ".bmp", false));
+            SearchFilterCollection.Add(new SearchFilterData("GIF", ".gif", false));
+            SearchFilterCollection.Add(new SearchFilterData("XLS", ".xls", false));
+            SearchFilterCollection.Add(new SearchFilterData("XLSX", ".xlsx", false));
+            SearchFilterCollection.Add(new SearchFilterData("DOC", ".doc", false));
+            SearchFilterCollection.Add(new SearchFilterData("DOCX", ".docx", false));
+            SearchFilterCollection.Add(new SearchFilterData("PPT", ".ppt", false));
+            SearchFilterCollection.Add(new SearchFilterData("VS SLN", ".sln", false));
+        }
+
         /// <summary>
         /// Build Index from stratch
         /// </summary>
@@ -141,7 +166,7 @@ namespace LuceneSearch
             {
                 SearchCommand_Execute(new object());
             }, TaskContinuationOptions.OnlyOnRanToCompletion).ContinueWith((t2) =>
-            {                
+            {
                 MessageBox.Show("Settings saved, Index rebuilt, Search refreshed !!");
             });
         }
@@ -153,6 +178,8 @@ namespace LuceneSearch
         {
             try
             {
+                ConfigSettings = new ObservableCollection<NameValuePair>();
+
                 ConfigSettings?.Clear();
                 var keys = ConfigurationManager.AppSettings?.AllKeys;
 
@@ -210,7 +237,14 @@ namespace LuceneSearch
                 return;
             }
 
-            var documentDataList = _searchManager.Search(SearchString);
+            var documentDataList = _searchManager.Search(
+                new SearchContext
+                {
+                    SearchString = SearchString,
+                    IndexPath = ConfigurationManager.AppSettings["IndexLocation"],
+                    ScanPath = ConfigurationManager.AppSettings["DataLocation"],
+                    SearchFilterDataList = SearchFilterCollection?.ToList()
+                });
 
             _synchronizationContext.Send((t) =>
             {

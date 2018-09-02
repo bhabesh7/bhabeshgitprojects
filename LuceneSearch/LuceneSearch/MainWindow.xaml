@@ -119,11 +119,36 @@
                                 </ListView.View>
                             </ListView>
                             <Button Margin="5" 
-                                    Content="Apply" Width="80" HorizontalAlignment="Center"
-                                    Command="{Binding ElementName=yuriWin,Path=DataContext.SaveSettingsCommand}"/>
+                                    Content="Save" Width="80" HorizontalAlignment="Right"
+                                    Command="{Binding ElementName=yuriWin,Path=DataContext.ApplyIndexSettingsCommand}"/>
                         </StackPanel>
                     </GroupBox>
 
+                    <GroupBox Header="Search Settings" Grid.Row="1" Margin="5" Padding="5">
+                        <ScrollViewer>
+                            <StackPanel>
+                                <ListView ItemsSource="{Binding SearchFilterCollection}" MaxHeight="150">
+                                    <ListView.View>
+                                        <GridView>
+                                            <GridViewColumn Header="Name" Width="100" DisplayMemberBinding="{Binding Name}"></GridViewColumn>
+
+                                            <GridViewColumn Header="Apply" Width="140">
+                                                <GridViewColumn.CellTemplate>
+                                                    <DataTemplate>
+                                                        <RadioButton GroupName="a" IsChecked="{Binding IsChecked, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                                                              Width="120" HorizontalAlignment="Center"/>
+                                                    </DataTemplate>
+                                                </GridViewColumn.CellTemplate>
+                                            </GridViewColumn>
+                                        </GridView>
+                                    </ListView.View>
+                                </ListView>
+                                <Button Margin="5" 
+                                    Content="Apply" Width="80" HorizontalAlignment="Right"
+                                    Command="{Binding ElementName=yuriWin,Path=DataContext.ApplySearchSettingsCommand}"/>
+                            </StackPanel>
+                        </ScrollViewer>
+                    </GroupBox>
                 </Grid>
             </ScrollViewer>
         </Expander>

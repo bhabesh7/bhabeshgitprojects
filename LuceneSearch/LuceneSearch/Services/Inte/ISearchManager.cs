@@ -18,7 +18,8 @@ namespace LuceneSearch.Services.Inte
         //event IndexAddedDelegate IndexAddedEvent;
         event EventHandler<EventDataArgs> DocumentAddedEvent;
         bool BuildIndex(SearchContext context);
-        IList<DocumentData> Search(string searchString);
+        //IList<DocumentData> Search(string searchString);
+        IList<DocumentData> Search(SearchContext searchContext);
         bool AddDocumentToIndex(string fullFilePath, SearchContext context);
         
     }

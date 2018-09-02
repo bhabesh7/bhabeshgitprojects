@@ -69,6 +69,7 @@
     </ApplicationDefinition>
     <Compile Include="DataModel\NameValuePair.cs" />
     <Compile Include="DataModel\SearchContext.cs" />
+    <Compile Include="DataModel\SearchFilterData.cs" />
     <Compile Include="Extensibility\PathToPicConverter.cs" />
     <Compile Include="Services\Impl\FileScanner.cs" />
     <Compile Include="Services\Impl\LucceneTest.cs" />
