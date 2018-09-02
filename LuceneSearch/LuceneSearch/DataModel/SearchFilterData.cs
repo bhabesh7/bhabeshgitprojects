@@ -35,24 +35,24 @@ namespace LuceneSearch.DataModel
         }
 
 
-        private bool _isChecked;
+        //private bool _isChecked;
 
-        public bool IsChecked
-        {
-            get { return _isChecked; }
-            set
-            {
-                _isChecked = value;
-                RaisePropertyChanged(null, new System.ComponentModel.PropertyChangedEventArgs("IsChecked"));
+        //public bool IsChecked
+        //{
+        //    get { return _isChecked; }
+        //    set
+        //    {
+        //        _isChecked = value;
+        //        RaisePropertyChanged(null, new System.ComponentModel.PropertyChangedEventArgs("IsChecked"));
 
-            }
-        }
+        //    }
+        //}
 
         public SearchFilterData(string name, string filter, bool isChecked)
         {
             Name = name;
             Filter = filter;
-            IsChecked = isChecked;
+            //IsChecked = isChecked;
         }
     }
 }

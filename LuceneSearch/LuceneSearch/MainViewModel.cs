@@ -34,15 +34,15 @@ namespace LuceneSearch
             {
                 try
                 {
-                    if (SearchFilterCollection != null)
-                    {
-                        foreach (var item in SearchFilterCollection)
-                        {
-                            item.IsChecked = false;
-                        }
-                    }
+                    //if (SearchFilterCollection != null)
+                    //{
+                    //    foreach (var item in SearchFilterCollection)
+                    //    {
+                    //        item.IsChecked = false;
+                    //    }
+                    //}
                     _selectedFilterData = value;
-                    _selectedFilterData.IsChecked = true;
+                    //_selectedFilterData.IsChecked = true;
                 }
                 catch (Exception ex)
                 {
@@ -311,7 +311,7 @@ namespace LuceneSearch
                     SearchString = SearchString,
                     IndexPath = ConfigurationManager.AppSettings["IndexLocation"],
                     ScanPath = ConfigurationManager.AppSettings["DataLocation"],
-                    SearchFilterDataList = SearchFilterCollection?.ToList()
+                    SelectedSearchFilterData = SelectedSearchFilter
                 });
 
             _synchronizationContext.Send((t) =>

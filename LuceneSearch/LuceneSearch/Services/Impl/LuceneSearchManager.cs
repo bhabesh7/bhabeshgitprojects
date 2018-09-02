@@ -134,22 +134,22 @@ namespace LuceneSearch.Services.Impl
         {
             QueryWrapperFilter filter = null;
 
-            if (searchContext == null)
+            if (searchContext == null || searchContext.SelectedSearchFilterData==null)
             {
                 return null;
             }
 
-            var matchedExtFilter = searchContext.SearchFilterDataList.FirstOrDefault((c) => c.Name.ToLower() != "all" && c.IsChecked);
+            var matchedExtFilter = searchContext.SelectedSearchFilterData.Name.ToLower() != "all";
 
-            if (matchedExtFilter != null)
+            if (matchedExtFilter)
             {
-                filter = new QueryWrapperFilter(new TermQuery(new Term("ext", matchedExtFilter.Filter)));
+                filter = new QueryWrapperFilter(new TermQuery(new Term("ext", searchContext.SelectedSearchFilterData.Filter)));
                 return filter;
             }
 
-            var matchedAllFilter = searchContext.SearchFilterDataList.FirstOrDefault((c) => c.Name.ToLower() == "all" && c.IsChecked);
+            var matchedAllFilter = searchContext.SelectedSearchFilterData.Name.ToLower() == "all";
 
-            if (matchedAllFilter != null)
+            if (matchedAllFilter)
             {
                 //return a null filter to match all extensions
                 return filter;
