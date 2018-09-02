@@ -4,10 +4,32 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"          
         xmlns:local="clr-namespace:LuceneSearch"
-        xmlns:conv="clr-namespace:LuceneSearch.Extensibility"
-        mc:Ignorable="d" x:Name="yuriWin"
-        Title="Yuri - Quick Search Files" WindowState="Maximized">
+        xmlns:conv="clr-namespace:LuceneSearch.Extensibility"       
+        mc:Ignorable="d" x:Name="yuriWin" WindowStyle="SingleBorderWindow"
+        Title="Yuri - Quick Search Files" WindowState="Maximized" Background="DarkGray">
     <Window.Resources>
+
+        <!--<Style TargetType="ListViewItem" x:Key="lvSelTemplate">
+            <Style.Triggers>
+                <Trigger Property="IsSelected" Value="True">
+                    <Setter Property="Background" Value="LightBlue"/>                    
+                </Trigger>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="LightBlue"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style TargetType="ListBoxItem" x:Key="lbSelTemplate">
+            <Style.Triggers>
+                <Trigger Property="IsSelected" Value="True">
+                    <Setter Property="Background" Value="LightBlue"/>
+                </Trigger>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="LightBlue"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>-->
         <!--<Style TargetType="ListView">
             <Setter Property="Background" Value="#581845"/>
             <Setter Property="Foreground" Value="#C70039"/>
@@ -68,7 +90,9 @@
                 <!--<Button  Content="BuildIndex" Width="120" Margin="5" Command="{Binding BuildIndexCommand, UpdateSourceTrigger=PropertyChanged}"/>-->
             </WrapPanel>
 
-            <ListView Margin="10" Name="searchlst" Grid.Row="1" ItemsSource="{Binding SearchResultsCollection, UpdateSourceTrigger=PropertyChanged}" SelectedItem="{Binding SelectedSearchResult, UpdateSourceTrigger=PropertyChanged}">
+            <ListView Margin="10" Name="searchlst" Grid.Row="1" 
+                      ItemsSource="{Binding SearchResultsCollection, UpdateSourceTrigger=PropertyChanged}" 
+                      SelectedItem="{Binding SelectedSearchResult, UpdateSourceTrigger=PropertyChanged}">
                 <ListView.ContextMenu>
                     <ContextMenu MenuItem.Click="ContextMenu_Click">
                         <MenuItem>Open Location</MenuItem>
@@ -82,6 +106,7 @@
                         <GridViewColumn Header="Path" Width="450" DisplayMemberBinding="{Binding FilePath, UpdateSourceTrigger=PropertyChanged}" />
                     </GridView>
                 </ListView.View>
+
             </ListView>
             <!--<ListBox Name="picList" Grid.Row="1" ItemsSource="{Binding SearchResultsCollection, UpdateSourceTrigger=PropertyChanged}" Padding="5" Margin="5" VirtualizingPanel.IsVirtualizing="True" VirtualizingPanel.VirtualizationMode="Recycling">
             <ListBox.ItemTemplate>
@@ -120,8 +145,8 @@
 
         </Grid>
 
-        <Expander Grid.Column="2" ExpandDirection="Right">
-            <Expander.HeaderTemplate>
+        <Expander Grid.Column="2" ExpandDirection="Right" Header="Settings">
+            <!--<Expander.HeaderTemplate>
                 <DataTemplate>
                     <TextBlock Text="Settings" FontWeight="DemiBold" FontSize="14">
                         <TextBlock.RenderTransform>
@@ -129,50 +154,51 @@
                         </TextBlock.RenderTransform>
                     </TextBlock>
                 </DataTemplate>
-            </Expander.HeaderTemplate>
+            </Expander.HeaderTemplate>-->
             <ScrollViewer>
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>                        
                     </Grid.RowDefinitions>
 
-                    <GroupBox Header="Search Settings" Grid.Row="0" Margin="5" Padding="5">                        
-                            <StackPanel>
-                                <ListBox ItemsSource="{Binding SearchFilterCollection}" SelectedItem="{Binding SelectedSearchFilter}" MaxHeight="150" Margin="5">
-                                    <ListBox.ItemTemplate>
-                                        <DataTemplate>
-                                            <TextBlock Text="{Binding Name}"/>
-                                        </DataTemplate>
-                                    </ListBox.ItemTemplate>
-                                </ListBox>
-                            </StackPanel>                        
+                    <GroupBox Header="Search Settings" Grid.Row="0" Margin="5" Padding="5">
+                        <StackPanel>
+                            <ListBox ItemsSource="{Binding SearchFilterCollection}"
+                                     SelectedItem="{Binding SelectedSearchFilter}" MaxHeight="150" Margin="5">
+                                <ListBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding Name}"/>
+                                    </DataTemplate>
+                                </ListBox.ItemTemplate>
+                            </ListBox>
+                        </StackPanel>
                     </GroupBox>
 
-                    <GroupBox Header="Index Settings" Grid.Row="1" Margin="5" Padding="5">                        
-                            <StackPanel>
-                                <ListView ItemsSource="{Binding ConfigSettings}" MinHeight="150" Margin="5">
-                                    <ListView.View>
-                                        <GridView>
-                                            <GridViewColumn Header="Name" Width="100" DisplayMemberBinding="{Binding Name}"></GridViewColumn>
+                    <GroupBox Header="Index Settings" Grid.Row="1" Margin="5" Padding="5">
+                        <StackPanel>
+                            <ListView ItemsSource="{Binding ConfigSettings}" MinHeight="150" Margin="5">
+                                <ListView.View>
+                                    <GridView>
+                                        <GridViewColumn Header="Name" Width="100" DisplayMemberBinding="{Binding Name}"></GridViewColumn>
 
-                                            <GridViewColumn Header="Value" Width="140">
-                                                <GridViewColumn.CellTemplate>
-                                                    <DataTemplate>
-                                                        <TextBox Text="{Binding Value, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" Width="120" HorizontalAlignment="Center"/>
-                                                    </DataTemplate>
-                                                </GridViewColumn.CellTemplate>
-                                            </GridViewColumn>
-                                        </GridView>
-                                    </ListView.View>
-                                </ListView>
-                                <Button Margin="5" 
+                                        <GridViewColumn Header="Value" Width="140">
+                                            <GridViewColumn.CellTemplate>
+                                                <DataTemplate>
+                                                    <TextBox Text="{Binding Value, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" Width="120" HorizontalAlignment="Center"/>
+                                                </DataTemplate>
+                                            </GridViewColumn.CellTemplate>
+                                        </GridViewColumn>
+                                    </GridView>
+                                </ListView.View>
+                            </ListView>
+                            <Button Margin="5" 
                                     Content="Save" Width="60" HorizontalAlignment="Right"
                                     Command="{Binding ElementName=yuriWin,Path=DataContext.ApplyIndexSettingsCommand}"/>
-                            </StackPanel>                        
+                        </StackPanel>
                     </GroupBox>
 
-                    
+                   
                 </Grid>
             </ScrollViewer>
         </Expander>
