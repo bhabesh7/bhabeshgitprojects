@@ -7,7 +7,44 @@
         xmlns:conv="clr-namespace:LuceneSearch.Extensibility"
         mc:Ignorable="d" x:Name="yuriWin"
         Title="Yuri - Quick Search Files" WindowState="Maximized">
+    <Window.Resources>
+        <!--<Style TargetType="ListView">
+            <Setter Property="Background" Value="#581845"/>
+            <Setter Property="Foreground" Value="#C70039"/>
+        </Style>
 
+        <Style TargetType="ListBox">
+            <Setter Property="Background" Value="#581845"/>
+            <Setter Property="Foreground" Value="#C70039"/>
+        </Style>
+
+        <Style TargetType="TextBlock">
+            <Setter Property="Foreground" Value="#C70039"/>
+        </Style>
+        
+        <Style TargetType="TextBox">
+            <Setter Property="Background" Value="#581845"/>
+            <Setter Property="Foreground" Value="#C70039"/>
+        </Style>
+
+        <Style TargetType="ScrollBar">
+            <Setter Property="Background" Value="#581845"/>
+            <Setter Property="Foreground" Value="#C70039"/>
+        </Style>
+
+        <Style TargetType="GroupBox">
+            <Setter Property="Background" Value="#581845"/>
+            <Setter Property="Foreground" Value="#C70039"/>
+            <Setter Property="BorderBrush" Value="Gray"/>
+            <Setter Property="BorderThickness" Value="0.5"/>
+        </Style>
+
+        <Style TargetType="Button">
+            <Setter Property="Background" Value="#581845"/>
+            <Setter Property="Foreground" Value="#C70039"/>
+        </Style>-->
+
+    </Window.Resources>
     <Grid>
 
         <Grid.ColumnDefinitions>
@@ -39,8 +76,7 @@
                 </ListView.ContextMenu>
                 <ListView.View>
                     <GridView>
-                        <GridViewColumn  Header="FileName" Width="350" DisplayMemberBinding="{Binding FileName, UpdateSourceTrigger=PropertyChanged}">
-
+                        <GridViewColumn Header="FileName" Width="350" DisplayMemberBinding="{Binding FileName, UpdateSourceTrigger=PropertyChanged}">
                         </GridViewColumn>
                         <GridViewColumn Header="Ext" Width="450" DisplayMemberBinding="{Binding Extention, UpdateSourceTrigger=PropertyChanged}" />
                         <GridViewColumn Header="Path" Width="450" DisplayMemberBinding="{Binding FilePath, UpdateSourceTrigger=PropertyChanged}" />
