@@ -67,6 +67,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="DataModel\NameValuePair.cs" />
     <Compile Include="DataModel\SearchContext.cs" />
     <Compile Include="Extensibility\PathToPicConverter.cs" />
     <Compile Include="Services\Impl\FileScanner.cs" />

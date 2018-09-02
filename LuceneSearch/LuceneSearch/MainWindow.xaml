@@ -5,13 +5,14 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"          
         xmlns:local="clr-namespace:LuceneSearch"
         xmlns:conv="clr-namespace:LuceneSearch.Extensibility"
-        mc:Ignorable="d"
+        mc:Ignorable="d" x:Name="yuriWin"
         Title="Yuri - Quick Search Files" WindowState="Maximized">
-    
+
     <Grid>
 
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="Auto"/>
             <ColumnDefinition Width="Auto"/>
         </Grid.ColumnDefinitions>
         <Grid Grid.Column="0">
@@ -25,9 +26,9 @@
             </Grid.RowDefinitions>
 
             <WrapPanel Grid.Row="0" Background="Beige">
-                <TextBox FontSize="16" Text="{Binding SearchString, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" Width="800" Margin="5" TextChanged="TextBox_TextChanged"/>
+                <TextBox FontSize="16" Text="{Binding SearchString, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" Width="{Binding ElementName=searchlst, Path=ActualWidth}" Margin="5" TextChanged="TextBox_TextChanged"/>
                 <!--<Button Background="Violet" Foreground="White" Content="Search" Height="35" Width="120" Margin="5" Command="{Binding SearchCommand, UpdateSourceTrigger=PropertyChanged}"/>-->
-                <Button  Content="BuildIndex" Width="120" Margin="5" Command="{Binding BuildIndexCommand, UpdateSourceTrigger=PropertyChanged}"/>
+                <!--<Button  Content="BuildIndex" Width="120" Margin="5" Command="{Binding BuildIndexCommand, UpdateSourceTrigger=PropertyChanged}"/>-->
             </WrapPanel>
 
             <ListView Margin="10" Name="searchlst" Grid.Row="1" ItemsSource="{Binding SearchResultsCollection, UpdateSourceTrigger=PropertyChanged}" SelectedItem="{Binding SelectedSearchResult, UpdateSourceTrigger=PropertyChanged}">
@@ -83,21 +84,46 @@
 
         </Grid>
 
-        <!--<Expander Grid.Column="1" ExpandDirection="Right">
+        <Expander Grid.Column="2" ExpandDirection="Right">
             <Expander.HeaderTemplate>
                 <DataTemplate>
-                    <TextBlock Text="Settings">
+                    <TextBlock Text="Settings" FontWeight="DemiBold" FontSize="14">
                         <TextBlock.RenderTransform>
-                            <RotateTransform Angle="90" />
+                            <RotateTransform Angle="270" CenterY="20" CenterX="35" />
                         </TextBlock.RenderTransform>
                     </TextBlock>
                 </DataTemplate>
             </Expander.HeaderTemplate>
+            <ScrollViewer>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
 
-            <UniformGrid>
-                <TextBlock Text="IndexLocation" Height="30"/>
-                <TextBox Text="D:\Bhabesh" Height="30"/>
-            </UniformGrid>
-        </Expander>-->
+                    <GroupBox Header="Configuration" Grid.Row="0">
+                        <StackPanel>
+                            <ListView ItemsSource="{Binding ConfigSettings}" Margin="5" Padding="5">
+                                <ListView.View>
+                                    <GridView>
+                                        <GridViewColumn Header="Name" Width="100" DisplayMemberBinding="{Binding Name}"></GridViewColumn>
+
+                                        <GridViewColumn Header="Value" Width="140">
+                                            <GridViewColumn.CellTemplate>
+                                                <DataTemplate>
+                                                    <TextBox Text="{Binding Value, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" Width="120" HorizontalAlignment="Center"/>
+                                                </DataTemplate>
+                                            </GridViewColumn.CellTemplate>
+                                        </GridViewColumn>
+                                    </GridView>
+                                </ListView.View>
+                            </ListView>
+                            <Button Content="Save" Width="80" Command="{Binding ElementName=yuriWin,Path=DataContext.SaveSettingsCommand}"/>
+                        </StackPanel>
+                    </GroupBox>
+
+                </Grid>
+            </ScrollViewer>
+        </Expander>
     </Grid>
 </Window>

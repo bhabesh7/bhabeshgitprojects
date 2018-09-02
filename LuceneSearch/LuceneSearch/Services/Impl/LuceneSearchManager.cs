@@ -146,7 +146,11 @@ namespace LuceneSearch.Services.Impl
                         var analyser = new StandardAnalyzer(Lucene.Net.Util.Version.LUCENE_30);
                         QueryParser queryParser = new QueryParser(Lucene.Net.Util.Version.LUCENE_30, "name", analyser);
                         var query = queryParser.Parse(searchString);
-                        var topDocs = indexSearcher.Search(query, 10000);
+
+                        int searchHitCount = 1000;//default
+                        int.TryParse(ConfigurationManager.AppSettings["SearchHitCount"], out searchHitCount);
+
+                        var topDocs = indexSearcher.Search(query, searchHitCount);
 
                         foreach (var item in topDocs.ScoreDocs)
                         {
