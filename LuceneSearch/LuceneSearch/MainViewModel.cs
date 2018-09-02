@@ -142,13 +142,14 @@ namespace LuceneSearch
 
             FetchAppConfigSettings();
 
+            InitializeCommands();
+        }
+
+        private void InitializeCommands()
+        {
             SearchCommand = new DelegateCommand(SearchCommand_CanExecute, SearchCommand_Execute);
             _searchManager.DocumentAddedEvent += _searchManager_DocumentAddedEvent;
-            //ApplySearchSettingsCommand = new DelegateCommand((y) => { return true; }, (x) =>
-            //{
 
-            //    SearchCommand_Execute(new object());
-            //});
             ApplyIndexSettingsCommand = new DelegateCommand((y) => { return true; }, (x) =>
             {
                 SaveSettingsRebuildIndexRefresh();
