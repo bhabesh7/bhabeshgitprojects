@@ -108,22 +108,14 @@ namespace LuceneSearch.Services.Impl
                     }
                 }
 
-                //foreach (var doc in documentDataList)
-                //{
-                //    Document document = new Document();
-                //    Field nameField = new Field("name", doc.FileName, Field.Store.YES, Field.Index.ANALYZED);
-                //    Field pathField = new Field("path", doc.FilePath, Field.Store.YES, Field.Index.NOT_ANALYZED);
-                //    document.Add(nameField);
-                //    document.Add(pathField);
-                //    indexWriter.AddDocument(document);
-                //    Trace.WriteLine(string.Format("Added {0} to Index", doc.FilePath));
-                //    //System.IO.Path.GetDirectoryName(doc.FilePath), doc.FileName));
-                //}
-                //indexWriter.Dispose();
-                //indexDirectory.Dispose();
+                DocumentAddedEvent?.Invoke(this, new EventDataArgs { Data = "Indexing Complete !!" });
+
+              
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                DocumentAddedEvent?.Invoke(this, new EventDataArgs { Data = string.Format("Error: {0}", ex.Message) });
+
                 return false;
 
             }
