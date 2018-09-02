@@ -32,33 +32,12 @@ namespace LuceneSearch
             get { return _selectedFilterData; }
             set
             {
-                try
-                {
-                    //if (SearchFilterCollection != null)
-                    //{
-                    //    foreach (var item in SearchFilterCollection)
-                    //    {
-                    //        item.IsChecked = false;
-                    //    }
-                    //}
-                    _selectedFilterData = value;
-                    //_selectedFilterData.IsChecked = true;
-                }
-                catch (Exception ex)
-                {
-
-                }
-                finally
-                {
-                    RaisePropertyChanged(null, new System.ComponentModel.PropertyChangedEventArgs("SelectedSearchFilter"));
-                    SearchCommand_Execute(new object());
-                }
+                _selectedFilterData = value;
+                RaisePropertyChanged(null, new System.ComponentModel.PropertyChangedEventArgs("SelectedSearchFilter"));
+                SearchCommand_Execute(new object());
             }
         }
-
-
-        //public ICommand ApplySearchSettingsCommand { get; set; }
-
+        
         public ICommand ApplyIndexSettingsCommand { get; set; }
 
 
@@ -196,19 +175,7 @@ namespace LuceneSearch
             catch (Exception ex)
             {
                 CurrentStatus = ex.Message;
-            }
-            //SearchFilterCollection.Add(new SearchFilterData("ALL", ".all", true));
-            //SearchFilterCollection.Add(new SearchFilterData("JPG", ".jpg", false));
-            //SearchFilterCollection.Add(new SearchFilterData("PNG", ".png", false));
-            //SearchFilterCollection.Add(new SearchFilterData("BMP", ".bmp", false));
-            //SearchFilterCollection.Add(new SearchFilterData("GIF", ".gif", false));
-            //SearchFilterCollection.Add(new SearchFilterData("XLS", ".xls", false));
-            //SearchFilterCollection.Add(new SearchFilterData("XLSX", ".xlsx", false));
-            //SearchFilterCollection.Add(new SearchFilterData("DOC", ".doc", false));
-            //SearchFilterCollection.Add(new SearchFilterData("DOCX", ".docx", false));
-            //SearchFilterCollection.Add(new SearchFilterData("PPT", ".ppt", false));
-            //SearchFilterCollection.Add(new SearchFilterData("SLN", ".sln", false));
-            //SearchFilterCollection.Add(new SearchFilterData("ODS", ".ods", false));
+            }          
         }
 
         /// <summary>
@@ -223,8 +190,7 @@ namespace LuceneSearch
 
                 Stopwatch sw = new Stopwatch();
                 sw.Start();
-                //_searchManager.IndexAddedEvent += _searchManager_IndexAddedEvent1; 
-                //_searchManager.DocumentAddedEvent += _searchManager_DocumentAddedEvent;
+                
                 _searchManager.BuildIndex(new SearchContext { IndexPath = indexLocation, ScanPath = dataLocation });
                 sw.Stop();
                 Trace.WriteLine(string.Format("Time taken to build index {0}", sw.Elapsed.ToString()));
@@ -345,7 +311,5 @@ namespace LuceneSearch
                 RaisePropertyChanged(null, new System.ComponentModel.PropertyChangedEventArgs("SearchCommand"));
             }
         }
-
-
     }
 }
