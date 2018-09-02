@@ -135,7 +135,7 @@ namespace LuceneSearch
                 _searchManager.BuildIndex(new SearchContext { IndexPath = indexLocation, ScanPath = dataLocation });
                 sw.Stop();
                 Trace.WriteLine(string.Format("Time taken to build index {0}", sw.Elapsed.ToString()));
-                MessageBox.Show(string.Format("Time taken to re-build index {0}", sw.Elapsed.ToString()));
+                //MessageBox.Show(string.Format("Time taken to re-build index {0}", sw.Elapsed.ToString()));
 
             }).ContinueWith((t) =>
             {

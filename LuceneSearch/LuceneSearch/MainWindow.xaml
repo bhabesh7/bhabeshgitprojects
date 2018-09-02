@@ -25,8 +25,8 @@
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
 
-            <WrapPanel Grid.Row="0" Background="Beige">
-                <TextBox FontSize="16" Text="{Binding SearchString, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" Width="{Binding ElementName=searchlst, Path=ActualWidth}" Margin="5" TextChanged="TextBox_TextChanged"/>
+            <WrapPanel Grid.Row="0">
+                <TextBox FontSize="16" ToolTip="Type *:* for searching all !!" Text="{Binding SearchString, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" Width="{Binding ElementName=searchlst, Path=ActualWidth}" Margin="5" TextChanged="TextBox_TextChanged"/>
                 <!--<Button Background="Violet" Foreground="White" Content="Search" Height="35" Width="120" Margin="5" Command="{Binding SearchCommand, UpdateSourceTrigger=PropertyChanged}"/>-->
                 <!--<Button  Content="BuildIndex" Width="120" Margin="5" Command="{Binding BuildIndexCommand, UpdateSourceTrigger=PropertyChanged}"/>-->
             </WrapPanel>
@@ -101,9 +101,9 @@
                         <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
 
-                    <GroupBox Header="Configuration" Grid.Row="0">
+                    <GroupBox Header="Configuration" Grid.Row="0" Margin="5" Padding="5">
                         <StackPanel>
-                            <ListView ItemsSource="{Binding ConfigSettings}" Margin="5" Padding="5">
+                            <ListView ItemsSource="{Binding ConfigSettings}" MinHeight="150" Margin="5">
                                 <ListView.View>
                                     <GridView>
                                         <GridViewColumn Header="Name" Width="100" DisplayMemberBinding="{Binding Name}"></GridViewColumn>
@@ -118,7 +118,9 @@
                                     </GridView>
                                 </ListView.View>
                             </ListView>
-                            <Button Content="Save" Width="80" Command="{Binding ElementName=yuriWin,Path=DataContext.SaveSettingsCommand}"/>
+                            <Button Margin="5" 
+                                    Content="Apply" Width="80" HorizontalAlignment="Center"
+                                    Command="{Binding ElementName=yuriWin,Path=DataContext.SaveSettingsCommand}"/>
                         </StackPanel>
                     </GroupBox>
 
