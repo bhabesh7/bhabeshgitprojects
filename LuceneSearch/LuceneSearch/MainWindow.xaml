@@ -1,12 +1,13 @@
-﻿<Window x:Class="LuceneSearch.MainWindow"
+﻿<Controls:MetroWindow x:Class="LuceneSearch.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"          
         xmlns:local="clr-namespace:LuceneSearch"
-        xmlns:conv="clr-namespace:LuceneSearch.Extensibility"       
+        xmlns:conv="clr-namespace:LuceneSearch.Extensibility"     
+        xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
         mc:Ignorable="d" x:Name="yuriWin" WindowStyle="SingleBorderWindow"
-        Title="Yuri - Quick Search Files" WindowState="Maximized" Background="DarkGray">
+        Title="Yuri - Quick Search Files" WindowState="Maximized">
     <Window.Resources>
 
         <!--<Style TargetType="ListViewItem" x:Key="lvSelTemplate">
@@ -146,7 +147,7 @@
         </Grid>
 
         <Expander Grid.Column="2" ExpandDirection="Right" Header="Settings">
-            <!--<Expander.HeaderTemplate>
+            <Expander.HeaderTemplate>
                 <DataTemplate>
                     <TextBlock Text="Settings" FontWeight="DemiBold" FontSize="14">
                         <TextBlock.RenderTransform>
@@ -154,7 +155,7 @@
                         </TextBlock.RenderTransform>
                     </TextBlock>
                 </DataTemplate>
-            </Expander.HeaderTemplate>-->
+            </Expander.HeaderTemplate>
             <ScrollViewer>
                 <Grid>
                     <Grid.RowDefinitions>
@@ -203,4 +204,4 @@
             </ScrollViewer>
         </Expander>
     </Grid>
-</Window>
+</Controls:MetroWindow>

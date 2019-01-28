@@ -280,7 +280,7 @@ namespace LuceneSearch
                     SelectedSearchFilterData = SelectedSearchFilter
                 });
 
-            _synchronizationContext.Send((t) =>
+            Dispatcher.CurrentDispatcher.Invoke(() =>
             {
                 SearchResultsCollection?.Clear();
 
@@ -291,7 +291,20 @@ namespace LuceneSearch
                 {
                     SearchResultsCollection.Add(docData);
                 }
-            }, null);
+            });
+
+            //_synchronizationContext.Send((t) =>
+            //{
+            //    SearchResultsCollection?.Clear();
+
+            //    if (documentDataList != null)
+            //        SearchCount = documentDataList.Count;
+
+            //    foreach (var docData in documentDataList)
+            //    {
+            //        SearchResultsCollection.Add(docData);
+            //    }
+            //}, null);
 
         }
 
