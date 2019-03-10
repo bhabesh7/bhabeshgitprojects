@@ -1,0 +1,10 @@
+C:\Bhabesh\Programming\LogMineApp\LogMineLib\bin\Debug\Config\Patterns.mine
+C:\Bhabesh\Programming\LogMineApp\LogMineLib\bin\Debug\Config\Tokens.mine
+C:\Bhabesh\Programming\LogMineApp\LogMineLib\bin\Debug\LogFiles\Sample.log
+C:\Bhabesh\Programming\LogMineApp\LogMineLib\bin\Debug\LogMineLib.dll
+C:\Bhabesh\Programming\LogMineApp\LogMineLib\bin\Debug\LogMineLib.pdb
+C:\Bhabesh\Programming\LogMineApp\LogMineLib\bin\Debug\Newtonsoft.Json.dll
+C:\Bhabesh\Programming\LogMineApp\LogMineLib\bin\Debug\Newtonsoft.Json.pdb
+C:\Bhabesh\Programming\LogMineApp\LogMineLib\bin\Debug\Newtonsoft.Json.xml
+C:\Bhabesh\Programming\LogMineApp\LogMineLib\obj\Debug\LogMineLib.dll
+C:\Bhabesh\Programming\LogMineApp\LogMineLib\obj\Debug\LogMineLib.pdb
