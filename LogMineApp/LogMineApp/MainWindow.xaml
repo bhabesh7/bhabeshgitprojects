@@ -17,6 +17,7 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         <Button Command="{Binding AnalyzeCommand}" Content="Analyze" Width="100" Height="30" Grid.Column="1"/>
 
@@ -64,6 +65,11 @@
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>
-        <TextBlock Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="2" Text="{Binding ClusterSummary}"/>
+
+        <ListBox ItemsSource="{Binding Output}" Grid.Row="2" Grid.Column="0" ></ListBox>
+        <Button Command="{Binding AutoPatternCommand}" Content="AutoPattern" Width="100" Height="30" Grid.Column="1" Grid.Row="2"/>
+
+        <TextBlock Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="3" Text="{Binding ClusterSummary}"/>
+        
     </Grid>
 </Window>

@@ -11,5 +11,6 @@ namespace LogMineLib.Interfaces
     {
         IList<LineNode> BuildLogTree(); 
         IList<string> GetAllLogLines();
+        IList<string> ExtractPatternOutput();
     }
 }

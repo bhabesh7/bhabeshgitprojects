@@ -92,6 +92,24 @@ namespace LogMineLib.Impl
             return rawLogClusters;
         }
 
+        public IList<string> ExtractPatternOutput()
+        {
+            IList<string> output = new List<string>();
+            string temp = string.Empty;
+            foreach (var line in _logReader.ReadLines(@"LogFiles\sample.log"))
+            {
+                temp = line;
+                foreach (var patternKey in _patternsManager.GetAllGrokKeys())
+                {
+                    var regeexPattern = _patternsManager.GetPattern(patternKey);
+
+                    temp = Regex.Replace(temp, regeexPattern, patternKey);
+                }
+                output.Add(temp);
+            }
+            return output;
+        }
+
         public IList<string> GetAllLogLines()
         {
             return _logLines;

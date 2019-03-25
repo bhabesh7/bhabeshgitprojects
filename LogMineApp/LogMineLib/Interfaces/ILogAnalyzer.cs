@@ -25,5 +25,7 @@ namespace LogMineLib.Interfaces
         IList<MatchingPair> ClusterRawLines(IList<string> logLines);
 
         IList<Cluster> FormClusters(IList<string> logLines);
+
+        
     }
 }

@@ -16,6 +16,7 @@ namespace LogMineApp
     public class MainWindowViewModel : BindableBase
     {
         public ICommand AnalyzeCommand { get; set; }
+        public ICommand AutoPatternCommand { get; set; }
         public ObservableCollection<DisplayPattern> PatternsCollection { get; set; }
         public ObservableCollection<DisplayPattern> RawLogCollection { get; set; }
 
@@ -30,9 +31,19 @@ namespace LogMineApp
 
         public MainWindowViewModel()
         {
+            Output = new ObservableCollection<string>();
             RawLogCollection = new ObservableCollection<DisplayPattern>();
             PatternsCollection = new ObservableCollection<DisplayPattern>();
             AnalyzeCommand = new DelegateCommand(AnalyzeCommandHandler);
+            AutoPatternCommand = new DelegateCommand(AutoPatternCommandHandler);
+        }
+
+        public ObservableCollection<string> Output { get; set; }
+        private void AutoPatternCommandHandler()
+        {
+            ILogTree logTree = new BasicLogTree();
+            Output.Clear();
+            Output.AddRange(logTree.ExtractPatternOutput());
         }
 
         private async void AnalyzeCommandHandler()

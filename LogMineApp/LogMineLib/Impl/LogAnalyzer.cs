@@ -69,15 +69,15 @@ namespace LogMineLib.Impl
                     score += (float)(1.0f / (biggerArray.Length));
                 }
 
-                //Early Abandon field score calc if Max score TH is already reached
-                //Higher score indictes lot of variation between the log lines being compared.
+                //Early Abandon field score calc if Max score TH is already reached.
+                //Higher score indictes less variation between the log lines being compared.
                 //if (score >= MAX_RAW_LOG_MSG_DIST)
                 //{
                 //    return -1;
                 //}
             }
 
-
+            //distance = 1 - similarity
             return (10.0f - score);
         }
 
@@ -203,5 +203,7 @@ namespace LogMineLib.Impl
 
             return matchingPairList;
         }
+
+      
     }
 }
