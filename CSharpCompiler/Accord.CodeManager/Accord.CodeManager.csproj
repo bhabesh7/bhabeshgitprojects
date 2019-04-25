@@ -1,0 +1,67 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{D095D8C2-8682-489D-A27A-5D46B7B75DF9}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Accord.CodeManager</RootNamespace>
+    <AssemblyName>Accord.CodeManager</AssemblyName>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.Composition" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="CodeFileParser.cs" />
+    <Compile Include="FolderScanner.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Accord.DataModel\Accord.DataModel.csproj">
+      <Project>{D85F9F82-2522-4746-B166-DDAD997D2614}</Project>
+      <Name>Accord.DataModel</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Accord.Interfaces\Accord.Interfaces.csproj">
+      <Project>{9126d78c-f96e-458f-ba7e-e47b500ef2d5}</Project>
+      <Name>Accord.Interfaces</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>if not exist "$(SolutionDir)Accord.MainApp\$(OutDir)PARTS" mkdir "$(SolutionDir)Accord.MainApp\$(OutDir)PARTS"
+if not exist "$(SolutionDir)Accord.MainApp\$(OutDir)PARTS\C#" mkdir "$(SolutionDir)Accord.MainApp\$(OutDir)PARTS\C#"
+if not exist "$(SolutionDir)Accord.MainApp\$(OutDir)PARTS\JAVA" mkdir "$(SolutionDir)Accord.MainApp\$(OutDir)PARTS\JAVA"
+copy /Y "$(TargetDir)$(ProjectName).dll" "$(SolutionDir)Accord.MainApp\$(OutDir)PARTS\C#\$(ProjectName).dll"
+copy /Y "$(TargetDir)$(ProjectName).dll" "$(SolutionDir)Accord.MainApp\$(OutDir)PARTS\JAVA\$(ProjectName).dll"</PostBuildEvent>
+  </PropertyGroup>
+</Project>
