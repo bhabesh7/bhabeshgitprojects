@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Prism.Mvvm;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Accord.DataModel
 {
-    public class DocumentData
+    public class DocumentData: BindableBase
     {
         private string _fileName;
 
@@ -68,12 +69,21 @@ namespace Accord.DataModel
             set { _origString = value; }
         }
 
+        private AnalysisStatus _status;
+
+        public AnalysisStatus AnalysisStatusInstance
+        {
+            get { return _status; }
+            set { _status = value; RaisePropertyChanged(nameof(AnalysisStatusInstance)); }
+        }
+
 
         public DocumentData()
         {
             FilePath = string.Empty;
             FileName = string.Empty;
             IsChecked = true;
+            AnalysisStatusInstance = AnalysisStatus.NotStarted;
         }
 
     }

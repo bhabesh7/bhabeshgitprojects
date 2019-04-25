@@ -54,7 +54,29 @@ namespace Accord.MainApp
             get { return inputText; }
             set { inputText = value; RaisePropertyChanged(nameof(inputText)); }
         }
-        
+
+        private bool isResultsExpanded;
+
+        public bool IsResultExpanded
+        {
+            get { return isResultsExpanded; }
+            set { isResultsExpanded = value; RaisePropertyChanged(nameof(IsResultExpanded)); }
+        }
+
+        private DocumentData _selectedSourceCodeFile;
+
+        public DocumentData SelectedSourceCodeFile
+        {
+            get { return _selectedSourceCodeFile; }
+            set
+            {
+                _selectedSourceCodeFile = value;
+                IsResultExpanded = true;
+                RaisePropertyChanged(nameof(SelectedSourceCodeFile));
+            }
+        }
+
+
 
         public ObservableCollection<DocumentData> SourceCodeFilesCollection { get; set; }
 
@@ -70,7 +92,7 @@ namespace Accord.MainApp
             {
                 //OpenFileDialog
 
-                if(string.IsNullOrEmpty(CodeRootLocation))
+                if (string.IsNullOrEmpty(CodeRootLocation))
                 {
                     return;
                 }
@@ -88,12 +110,14 @@ namespace Accord.MainApp
 
                 foreach (var codeFile in selectedFilesForAnalysis)
                 {
-                    string codeString =_codeParser.GetCodeFromFile(codeFile.FilePath);
+                    string codeString = _codeParser.GetCodeFromFile(codeFile.FilePath);
                     //codeString =codeString.Replace("\r", "");
 
                     //codeString = InputText;
                     var analysisResult = _analysisManager.RunAnalysis(codeString);
                     codeFile.AnalysisResultDataInstance = analysisResult;
+                    var status = (analysisResult.NameRuleErrors.Count == 0) ? AnalysisStatus.Completed_Ok : AnalysisStatus.Completed_NG;
+                    codeFile.AnalysisStatusInstance = status;
                     codeFile.OrigString = codeString;
                 }
             });

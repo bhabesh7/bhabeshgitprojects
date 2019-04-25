@@ -4,19 +4,24 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Accord.MainApp"
+        xmlns:conv="clr-namespace:Accord.MainApp.Converters"
         xmlns:pri="http://www.codeplex.com/prism"
         pri:ViewModelLocator.AutoWireViewModel="True"
         mc:Ignorable="d"
-        Title="MainView" Height="350" Width="525" WindowState="Maximized">
+        Title="MainView" WindowState="Maximized" >
+
     <Grid>
+        <Grid.Resources>
+            <conv:AnalysisStatusToColorConverter x:Key="colorConv"/>
+        </Grid.Resources>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="8*"></ColumnDefinition>
-            <ColumnDefinition Width="2*"></ColumnDefinition>
+            <ColumnDefinition Width="6.5*"></ColumnDefinition>
+            <ColumnDefinition Width="3.5*"></ColumnDefinition>
         </Grid.ColumnDefinitions>
         <!--<TextBox Margin="5" Grid.Row="0" Grid.Column="0" Width="{Binding ElementName=win, Path=ActualWidth}" 
                  FontSize="14" FontFamily="Calibri"
@@ -35,37 +40,44 @@
         </TextBox>
 
         <UniformGrid Columns="2" Grid.Column="1">
-        <Button Content="Load" Command="{Binding LoadCodeCommand}" >
-            <Button.Resources>
-                <Style TargetType="{x:Type Button}">
-                    <Setter Property="Margin" Value="5"/>
-                    <Setter Property="Width" Value="120"/>
-                    <Setter Property="Height" Value="30"/>
-                </Style>
-            </Button.Resources>
-        </Button>
-        <Button Content="Analyze" Command="{Binding AnalyzeCommand}">
-            <Button.Resources>
-                <Style TargetType="{x:Type Button}">
-                    <Setter Property="Margin" Value="5"/>
-                    <Setter Property="Width" Value="120"/>
-                    <Setter Property="Height" Value="30"/>
-                </Style>
-            </Button.Resources>
-        </Button>
+            <Button Content="Load" Command="{Binding LoadCodeCommand}" >
+                <Button.Resources>
+                    <Style TargetType="{x:Type Button}">
+                        <Setter Property="Margin" Value="5"/>
+                        <Setter Property="Width" Value="120"/>
+                        <Setter Property="Height" Value="30"/>
+                    </Style>
+                </Button.Resources>
+            </Button>
+            <Button Content="Analyze" Command="{Binding AnalyzeCommand}">
+                <Button.Resources>
+                    <Style TargetType="{x:Type Button}">
+                        <Setter Property="Margin" Value="5"/>
+                        <Setter Property="Width" Value="120"/>
+                        <Setter Property="Height" Value="30"/>
+                    </Style>
+                </Button.Resources>
+            </Button>
         </UniformGrid>
 
-        <ListView x:Name="codeLV" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="1" ItemsSource="{Binding SourceCodeFilesCollection, UpdateSourceTrigger=PropertyChanged}">
+        <ListView x:Name="codeLV" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="1" ItemsSource="{Binding SourceCodeFilesCollection, UpdateSourceTrigger=PropertyChanged}" SelectedItem="{Binding SelectedSourceCodeFile}">
             <ListView.View>
                 <GridView>
                     <GridViewColumn Header="FileName" Width="380" DisplayMemberBinding="{Binding FileName, UpdateSourceTrigger=PropertyChanged}">
                     </GridViewColumn>
                     <GridViewColumn Header="Ext" Width="100" DisplayMemberBinding="{Binding Extention, UpdateSourceTrigger=PropertyChanged}" />
                     <GridViewColumn Header="Path" Width="400" DisplayMemberBinding="{Binding FilePath, UpdateSourceTrigger=PropertyChanged}" />
-                    <GridViewColumn Header="Analyze" Width="100">
+                    <GridViewColumn Header="Analyze" Width="50">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <CheckBox IsChecked="{Binding IsChecked, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" Width="50"/>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                    <GridViewColumn Header="Status" Width="50">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <Ellipse Height="15" Width="15" Fill="{Binding AnalysisStatusInstance, Converter={StaticResource colorConv}, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
@@ -73,33 +85,57 @@
             </ListView.View>
         </ListView>
 
-        <TextBox IsReadOnly="True" Margin="5" Grid.Row="1" Grid.Column="1" Width="300" 
+        <!--<TextBox IsReadOnly="True" Margin="5" Grid.Row="1" Grid.Column="1" Width="300" 
                  FontSize="14" FontFamily="Calibri"
-                 Text="{Binding ElementName=codeLV,Path=SelectedItem.OrigString, UpdateSourceTrigger=PropertyChanged}" TextWrapping="Wrap" AcceptsReturn="True"/>
+                 Text="{Binding ElementName=codeLV,Path=SelectedItem.OrigString, UpdateSourceTrigger=PropertyChanged}" TextWrapping="Wrap" AcceptsReturn="True"/>-->
 
-        <UniformGrid Columns="2" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" DataContext="{Binding ElementName=codeLV,Path=SelectedItem.AnalysisResultDataInstance, UpdateSourceTrigger=PropertyChanged}">
-            
-            <TextBox IsReadOnly="True" TextWrapping="Wrap" VerticalAlignment="Top" HorizontalAlignment="Left" Text="{Binding GeneratedInterfaceString}" ScrollViewer.CanContentScroll="True" Width="300" Height="300"></TextBox>
+        <FlowDocumentReader Background="LightGray" Width="580" Grid.Row="1" Grid.Column="1" Height="300" Margin="10">
+            <FlowDocument>
+                <Paragraph>
+                    <Run Text="{Binding ElementName=codeLV,Path=SelectedItem.OrigString, UpdateSourceTrigger=PropertyChanged}" />
+                </Paragraph>
+            </FlowDocument>
+        </FlowDocumentReader>
 
-            <ListView ItemsSource="{Binding NameRuleErrors, UpdateSourceTrigger=PropertyChanged}">
-                <ListView.View>
-                    <GridView>
-                        <GridViewColumn Header="Violation" Width="100">
-                            <GridViewColumn.CellTemplate>
-                                <DataTemplate>
-                                    <TextBlock Text="{Binding NameRuleViolationString, UpdateSourceTrigger=PropertyChanged}" ToolTip="{Binding Suggestion, UpdateSourceTrigger=PropertyChanged}"/>
-                                </DataTemplate>
-                            </GridViewColumn.CellTemplate>
-                        </GridViewColumn>
-                        <GridViewColumn Header="NameSpace" Width="100" DisplayMemberBinding="{Binding NameSpace, UpdateSourceTrigger=PropertyChanged}" />
-                        <GridViewColumn Header="ClassName" Width="100" DisplayMemberBinding="{Binding ClassName, UpdateSourceTrigger=PropertyChanged}" />
-                        <GridViewColumn Header="Method" Width="100" DisplayMemberBinding="{Binding Method, UpdateSourceTrigger=PropertyChanged}" />
-                        <GridViewColumn Header="Param" Width="100" DisplayMemberBinding="{Binding Parameter, UpdateSourceTrigger=PropertyChanged}" />
-                        
-                    </GridView>
-                </ListView.View>
-            </ListView>
-        </UniformGrid>
-              
+        <Expander Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" ExpandDirection="Up" Header="Analysis Results" IsExpanded="{Binding IsResultExpanded, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+            <Grid  DataContext="{Binding ElementName=codeLV,Path=SelectedItem.AnalysisResultDataInstance, UpdateSourceTrigger=PropertyChanged}">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="4*"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="6*"/>
+                </Grid.ColumnDefinitions>
+
+                <!--<TextBox Width="580" Grid.Row="0" IsReadOnly="True" TextWrapping="Wrap" VerticalAlignment="Top" HorizontalAlignment="Left" Text="{Binding GeneratedInterfaceString}" ScrollViewer.CanContentScroll="True"></TextBox>-->
+
+                <FlowDocumentReader Background="LightGray" Width="580" Grid.Row="0" Grid.Column="0" Height="350">
+                    <FlowDocument>
+                        <Paragraph>
+                            <Run x:Name="run" Text="{Binding Path=GeneratedInterfaceString}" />
+                        </Paragraph>
+                    </FlowDocument>
+                </FlowDocumentReader>
+
+                <GridSplitter Grid.Column="1" Width="5" Height="350"/>
+
+                <ListView Grid.Column="2" ItemsSource="{Binding NameRuleErrors, UpdateSourceTrigger=PropertyChanged}">
+                    <ListView.View>
+                        <GridView>
+                            <GridViewColumn Header="Violation" Width="200">
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Cursor="Hand" Text="{Binding NameRuleViolationString, UpdateSourceTrigger=PropertyChanged}" ToolTip="{Binding Suggestion, UpdateSourceTrigger=PropertyChanged}"/>
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
+                            </GridViewColumn>
+                            <GridViewColumn Header="NameSpace" Width="100" DisplayMemberBinding="{Binding NameSpace, UpdateSourceTrigger=PropertyChanged}" />
+                            <GridViewColumn Header="ClassName" Width="100" DisplayMemberBinding="{Binding ClassName, UpdateSourceTrigger=PropertyChanged}" />
+                            <GridViewColumn Header="Method" Width="100" DisplayMemberBinding="{Binding Method, UpdateSourceTrigger=PropertyChanged}" />
+                            <GridViewColumn Header="Param" Width="100" DisplayMemberBinding="{Binding Parameter, UpdateSourceTrigger=PropertyChanged}" />
+
+                        </GridView>
+                    </ListView.View>
+                </ListView>
+            </Grid>
+        </Expander>
     </Grid>
 </Window>

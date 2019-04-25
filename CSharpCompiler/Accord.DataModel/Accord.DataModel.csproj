@@ -44,6 +44,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AnalysisResultData.cs" />
+    <Compile Include="AnalysisStatus.cs" />
     <Compile Include="DocumentData.cs" />
     <Compile Include="EnumDescriptionFetcher.cs" />
     <Compile Include="NameRuleError.cs" />

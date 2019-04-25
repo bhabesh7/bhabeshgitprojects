@@ -23,7 +23,7 @@ namespace CSharpCompilerLib
             CommonTokenStream tokenStream = new CommonTokenStream(lexer);
 
             CSharpParser parser = new CSharpParser(tokenStream);
-            
+
 
             //Grammar.CSharpParserBaseVisitor<Data> visitor = new CSharpParserBaseVisitor<Data>();
             //ctx.Accept<Data>(visitor);
@@ -57,6 +57,7 @@ namespace CSharpCompilerLib
             //        analysisResData.NameRuleErrors.Add(err);
             //    }
             //}
+
 
 
             return analysisResData;
