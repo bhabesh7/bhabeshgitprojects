@@ -10,6 +10,7 @@ using Antlr4.Runtime;
 using static CSharpCompilerLib.Grammar.CSharpParser;
 using CSharpCompilerLib.Rules;
 using Accord.DataModel;
+using System.Text.RegularExpressions;
 
 namespace CSharpCompilerLib
 {
@@ -20,6 +21,7 @@ namespace CSharpCompilerLib
         CSharpParser _parser;
         //StringBuilder _interfaceDefinitionBuilder = new StringBuilder();
         InterfaceExtractorRule _interfaceExtractRule;
+        IList<NameRuleError> _nameRuleErrors = new List<NameRuleError>();
 
         public CustomCSharpListener(CSharpParser parser)
         {
@@ -50,12 +52,14 @@ namespace CSharpCompilerLib
             //    return (templateNs + "\n" + code + "\n" + "}");
             //}
 
-            return string.IsNullOrEmpty(templateNs)? code: (templateNs+"\n" + code +"\n"+"}");
+            return string.IsNullOrEmpty(templateNs) ? code : (templateNs + "\n" + code + "\n" + "}");
         }
 
         public IList<NameRuleError> GetNameRuleErrorList()
         {
             return _interfaceExtractRule.GetNameRuleErrorList();
+            //var comprehensiveList = errList.Union<NameRuleError>(_nameRuleErrors).ToList();
+            //return comprehensiveList;
         }
 
         public override void EnterNamespace_declaration([NotNull] Namespace_declarationContext context)
@@ -66,7 +70,7 @@ namespace CSharpCompilerLib
             var id = context.qualified_identifier();
             var tokenStream = _parser.InputStream as ITokenStream;
             var currentNamespace = tokenStream.GetText(id.Start, id.Stop);
-            var formattedNs =string.Format("namespace {0}", currentNamespace);
+            var formattedNs = string.Format("namespace {0}", currentNamespace);
             _interfacePreProcTemplate.AppendLine(formattedNs);
             _interfacePreProcTemplate.AppendLine("{");
         }
@@ -74,7 +78,7 @@ namespace CSharpCompilerLib
         public override void ExitNamespace_declaration([NotNull] Namespace_declarationContext context)
         {
             base.ExitNamespace_declaration(context);
-           // _interfacePreProcTemplate.AppendLine("}");
+            // _interfacePreProcTemplate.AppendLine("}");
         }
 
         public override void EnterClass_definition([NotNull] CSharpParser.Class_definitionContext context)
@@ -100,37 +104,49 @@ namespace CSharpCompilerLib
         //    base.EnterBase_type(context);
         //}
 
+        //const string privatePropertyRegex = "^_[a-z]+[A-Z0-9]+[a-z0-9]*";
+        //const string publicPropertyRegex = "^[A-Z]+[a-z0-9]+[A-Z0-9]*[a-z0-9]+";
+
         public override void EnterProperty_declaration([NotNull] Property_declarationContext context)
         {
             base.EnterProperty_declaration(context);
+            _interfaceExtractRule.Enter_Property_declaration(context);
+            
+            //var propName = context.Start.Text;
+            //var parent = context.Parent;
+            ////int anscestorLevel = 4;
+            ////anscestorLevel > 1 ||
+            //while (parent.GetType() != typeof(Class_member_declarationsContext))
+            //{
+            //    parent = parent.Parent;
+            //    //anscestorLevel--;
+            //}
 
-            var propName = context.Start.Text;
-            var parent = context.Parent;
-            //int anscestorLevel = 4;
-            //anscestorLevel > 1 ||
-            while ( parent.GetType() != typeof(Class_member_declarationsContext))
-            {
-                parent = parent.Parent;
-                //anscestorLevel--;
-            }
+            //var parentInstance = parent as Class_member_declarationsContext;
+            //var accessMod = parentInstance.Start.Text;
+            //string currentRegexString = string.Empty;
+            //switch (accessMod.ToLower())
+            //{
+            //    case "private":
+            //        //startswith _ and followed by camelCase (_fieldName)
+            //        currentRegexString = privatePropertyRegex;
+            //        break;
+            //    case "public":
+            //    case "protected":
+            //        //PascalCase
+            //        currentRegexString = publicPropertyRegex;
+            //        //camelCase without _
+            //        break;
+            //    default:
+            //        break;
+            //}
+            
+            //var match = Regex.Match(propName, currentRegexString);
+            //if (match.Length < propName.Length)
+            //{
+            //    _nameRuleErrors.Add(new NameRuleError(NameRuleViolations.PropertyNameRuleViolation, string.Empty, string.Empty, string.Empty, string.Empty));
+            //}
 
-            var parentInstance = parent as Class_member_declarationsContext;
-            var accessMod = parentInstance.Start.Text;
-
-            switch (accessMod.ToLower())
-            {
-                case "private":
-                    //startswith _ and followed by camelCase (_fieldName)
-                    break;
-                case "public":
-                    //PascalCase
-                    break;
-                case "protected":
-                    //camelCase without _
-                    break;
-                default:
-                    break;
-            }
 
         }
 
@@ -138,31 +154,8 @@ namespace CSharpCompilerLib
         {
             base.EnterField_declaration(context);
 
-            var fieldName = context.Start.Text;
-            var parent = context.Parent;
-
-            while (parent.GetType() != typeof(Class_member_declarationContext))
-            {
-                parent = parent.Parent;
-            }
-
-            var parentInstance = parent as Class_member_declarationContext;
-            var accessMod = parentInstance.Start.Text;
-
-            switch (accessMod.ToLower())
-            {
-                case "private":
-                    //startswith _ and followed by camelCase (_fieldName)
-                    break;
-                case "public":
-                    //PascalCase
-                    break;
-                case "protected":
-                    //camelCase without _
-                    break;
-                default:
-                    break;
-            }
+            _interfaceExtractRule.Enter_Field_declaration(context);
+            
         }
 
         public override void EnterUsingNamespaceDirective([NotNull] UsingNamespaceDirectiveContext context)

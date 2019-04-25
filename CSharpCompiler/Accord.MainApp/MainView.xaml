@@ -92,7 +92,7 @@
         <FlowDocumentReader Background="LightGray" Width="580" Grid.Row="1" Grid.Column="1" Height="300" Margin="10">
             <FlowDocument>
                 <Paragraph>
-                    <Run Text="{Binding ElementName=codeLV,Path=SelectedItem.OrigString, UpdateSourceTrigger=PropertyChanged}" />
+                    <Run Text="{Binding OrigCodeString, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}" />
                 </Paragraph>
             </FlowDocument>
         </FlowDocumentReader>

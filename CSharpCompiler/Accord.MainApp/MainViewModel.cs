@@ -34,9 +34,18 @@ namespace Accord.MainApp
             set { _loadCodeCommand = value; RaisePropertyChanged(nameof(LoadCodeCommand)); }
         }
 
+        private string _origCodeString;
+
+        public string OrigCodeString
+        {
+            get
+            {
+                return _origCodeString;
+            }
+            set { _origCodeString = value; RaisePropertyChanged(nameof(OrigCodeString)); }
+        }
 
         private string _codeRootLocation;
-
         public string CodeRootLocation
         {
             get { return _codeRootLocation; }
@@ -72,6 +81,10 @@ namespace Accord.MainApp
             {
                 _selectedSourceCodeFile = value;
                 IsResultExpanded = true;
+                if (_selectedSourceCodeFile != null)
+                {
+                    OrigCodeString = _codeParser.GetCodeFromFile(_selectedSourceCodeFile.FilePath);
+                }
                 RaisePropertyChanged(nameof(SelectedSourceCodeFile));
             }
         }
@@ -118,7 +131,7 @@ namespace Accord.MainApp
                     codeFile.AnalysisResultDataInstance = analysisResult;
                     var status = (analysisResult.NameRuleErrors.Count == 0) ? AnalysisStatus.Completed_Ok : AnalysisStatus.Completed_NG;
                     codeFile.AnalysisStatusInstance = status;
-                    codeFile.OrigString = codeString;
+                    //codeFile.OrigString = codeString;
                 }
             });
         }

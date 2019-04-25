@@ -17,6 +17,7 @@ namespace CSharpCompilerLib.Rules
         IList<NameRuleError> _nameRuleErrorsList = new List<NameRuleError>();
         private string _currentClassName = string.Empty;
         private string _currentNamespace = string.Empty;
+        private string _currentMethodName = string.Empty;
         private bool _classAlreadyImplementsInterface = false;
 
         public InterfaceExtractorRule(ITokenStream tokenStream)
@@ -98,24 +99,27 @@ namespace CSharpCompilerLib.Rules
             _interfaceDefinitionBuilder.Append("}");
 
         }
-        string pascalCaseClassMethodRegex = "[A-Z]([A-Z0-9]*[a-z][a-z0-9]*[A-Z]|[a-z0-9]*[A-Z][A-Z0-9]*[a-z])[A-Za-z0-9]*";
-        string camelCaseParameterRegex = "[a-z]([A-Z0-9]*[a-z][a-z0-9]*[A-Z]|[a-z0-9]*[A-Z][A-Z0-9]*[a-z])[A-Za-z0-9]*";
-        string pascalCaseNamespaceRegex = "[A-Z]([A-Z0-9]*[a-z][a-z0-9]*[A-Z]|[a-z0-9]*[A-Z][A-Z0-9]*[a-z])[A-Za-z0-9]*";
-
+        const string pascalCaseClassMethodRegex = "[A-Z]([A-Z0-9]*[a-z][a-z0-9]*[A-Z]|[a-z0-9]*[A-Z][A-Z0-9]*[a-z])[A-Za-z0-9]*";
+        const string camelCaseParameterRegex = "[a-z]([A-Z0-9]*[a-z][a-z0-9]*[A-Z]|[a-z0-9]*[A-Z][A-Z0-9]*[a-z])[A-Za-z0-9]*";
+        const string pascalCaseNamespaceRegex = "[A-Z]([A-Z0-9]*[a-z][a-z0-9]*[A-Z]|[a-z0-9]*[A-Z][A-Z0-9]*[a-z])[A-Za-z0-9]*";
+        const string privatePropertyRegex = "^_[a-z]+[A-Z0-9]+[a-z0-9]*";
+        const string publicPropertyRegex = "^[A-Z]+[a-z0-9]+[A-Z0-9]*[a-z0-9]+";
 
         public void Enter_MethodDeclaration(Method_declarationContext context)
         {
-            var methodName = context.method_member_name().GetText();
+            _currentMethodName = context.method_member_name().GetText();
 
-            var match = Regex.Match(methodName, pascalCaseClassMethodRegex);
-            if (match.Length < methodName.Length)
+
+            var match = Regex.Match(_currentMethodName, pascalCaseClassMethodRegex);
+            if (match.Length < _currentMethodName.Length)
             {
-                _nameRuleErrorsList.Add(new NameRuleError(NameRuleViolations.MethodNameRuleViolation, string.Empty, _currentClassName, methodName, string.Empty));
+                _nameRuleErrorsList.Add(new NameRuleError(NameRuleViolations.MethodNameRuleViolation,
+                    _currentNamespace, _currentClassName, _currentMethodName, string.Empty));
             }
 
 
             var paramses = context.formal_parameter_list();
-
+            var parameters = string.Empty;
             if (paramses != null)
             {
                 //Method parameters detected
@@ -132,32 +136,115 @@ namespace CSharpCompilerLib.Rules
                     var matchP = Regex.Match(paramName, camelCaseParameterRegex);
                     if (matchP.Length < paramName.Length)
                     {
-                        _nameRuleErrorsList.Add(new NameRuleError(NameRuleViolations.ParameterNameRuleViolation, _currentNamespace, _currentClassName, methodName, paramName));
+                        _nameRuleErrorsList.Add(new NameRuleError(NameRuleViolations.ParameterNameRuleViolation, _currentNamespace, _currentClassName, _currentMethodName, paramName));
                     }
                 }
+                parameters = _tokenStream.GetText(paramses.Start, paramses.Stop);
             }
             if (_classAlreadyImplementsInterface) { return; }
 
-            var parameters = _tokenStream.GetText(paramses.Start, paramses.Stop);
+
             var compiledMethod = string.Empty;
             var returnType = string.Empty;
-
+            var accessMod = string.Empty;
             if (context.parent is Typed_member_declarationContext)
             {
                 var parent = context.parent as Typed_member_declarationContext;
+                var accessModPar = parent.Parent.Parent as Class_member_declarationContext;
+                accessMod = accessModPar.Start.Text;
                 returnType = _tokenStream.GetText(parent.Start, parent.Start);
-                compiledMethod = string.Format("\t{0} {1} ({2});", returnType, methodName, parameters);
+                compiledMethod = GetCompiledMethodNameIfPublic(parameters, returnType, accessMod);
             }
             else if (context.parent is Common_member_declarationContext)
             {
                 var parent = context.parent as Common_member_declarationContext;
+                var accessModPar = parent.Parent.Parent as Class_member_declarationContext;
+                if(accessModPar==null)
+                {
+
+                }
+                accessMod = accessModPar.Start.Text;
                 returnType = _tokenStream.GetText(parent.Start, parent.Start);
-                compiledMethod = string.Format("\t{0} {1} ({2});", returnType, methodName, parameters);
+                compiledMethod = GetCompiledMethodNameIfPublic(parameters, returnType, accessMod);
             }
 
-            _interfaceDefinitionBuilder.AppendLine(compiledMethod);
+            if (!string.IsNullOrEmpty(compiledMethod))
+            {
+                //generate interface method only if public method
+                _interfaceDefinitionBuilder.AppendLine(compiledMethod);
+            }
+        }
+
+        private string GetCompiledMethodNameIfPublic(string parameters, string returnType, string accessMod)
+        {
+            string compiledMethod;
+            if (accessMod?.ToLower() == "public")
+            {
+                compiledMethod = string.Format("\t{0} {1} ({2});", returnType, _currentMethodName, parameters);
+            }
+            else
+            {
+                compiledMethod = string.Empty;
+            }
+
+            return compiledMethod;
         }
 
 
+        public void Enter_Property_declaration(Property_declarationContext context)
+        {
+            var propName = context.Start.Text;
+            var parent = context.Parent;
+            //int anscestorLevel = 4;
+            //anscestorLevel > 1 ||
+            while (parent.GetType() != typeof(Class_member_declarationsContext))
+            {
+                parent = parent.Parent;
+                //anscestorLevel--;
+            }
+            var parentInstance = parent as Class_member_declarationsContext;
+            var accessMod = parentInstance.Start.Text;
+
+            CheckPropFieldRuleAndUpdateErrorList(propName, accessMod);
+        }
+
+        public void Enter_Field_declaration(Field_declarationContext context)
+        {
+            var fieldName = context.Start.Text;
+            var parent = context.Parent;
+
+            while (parent.GetType() != typeof(Class_member_declarationContext))
+            {
+                parent = parent.Parent;
+            }
+            var parentInstance = parent as Class_member_declarationContext;
+            var accessMod = parentInstance.Start.Text;
+            CheckPropFieldRuleAndUpdateErrorList(fieldName, accessMod);
+        }
+
+        private void CheckPropFieldRuleAndUpdateErrorList(string propOrFieldName, string accessMod)
+        {
+            string currentRegexString = string.Empty;
+            switch (accessMod.ToLower())
+            {
+                case "private":
+                    //startswith _ and followed by camelCase (_fieldName)
+                    currentRegexString = privatePropertyRegex;
+                    break;
+                case "public":
+                case "protected":
+                    //camelCase without _
+                    currentRegexString = publicPropertyRegex;
+                    break;
+                default:
+                    break;
+            }
+
+            var match = Regex.Match(propOrFieldName, currentRegexString);
+            if (match.Length < propOrFieldName.Length)
+            {
+                _nameRuleErrorsList.Add(new NameRuleError(NameRuleViolations.FieldNameRuleViolation, _currentNamespace, _currentClassName, string.Empty, propOrFieldName));
+            }
+        }
     }
 }

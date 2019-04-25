@@ -61,13 +61,7 @@ namespace Accord.DataModel
             set { _analysisResultData = value; }
         }
 
-        private string _origString;
-
-        public string OrigString
-        {
-            get { return _origString; }
-            set { _origString = value; }
-        }
+        
 
         private AnalysisStatus _status;
 
