@@ -12,7 +12,17 @@ namespace Accord.DataModel
 
     public class NameRuleError : BindableBase
     {
-        public readonly NameRuleViolations Violation;
+        //public readonly NameRuleViolations Violation;
+
+
+        private NameRuleViolations _violation;
+
+        public NameRuleViolations Violation
+        {
+            get { return _violation; }
+            set { _violation = value; }
+        }
+
         //public readonly string Namespace;
         //public readonly string ClassName;
         //public readonly string Method;

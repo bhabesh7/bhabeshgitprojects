@@ -158,8 +158,8 @@ namespace CSharpCompilerLib.Rules
             else if (context.parent is Common_member_declarationContext)
             {
                 var parent = context.parent as Common_member_declarationContext;
-                var accessModPar = parent.Parent.Parent as Class_member_declarationContext;
-                if(accessModPar==null)
+                var accessModPar = parent.Parent.Parent as Class_member_declarationsContext;
+                if (accessModPar == null)
                 {
 
                 }
@@ -205,7 +205,7 @@ namespace CSharpCompilerLib.Rules
             var parentInstance = parent as Class_member_declarationsContext;
             var accessMod = parentInstance.Start.Text;
 
-            CheckPropFieldRuleAndUpdateErrorList(propName, accessMod);
+            CheckPropRuleAndUpdateErrorList(propName, accessMod);
         }
 
         public void Enter_Field_declaration(Field_declarationContext context)
@@ -219,21 +219,59 @@ namespace CSharpCompilerLib.Rules
             }
             var parentInstance = parent as Class_member_declarationContext;
             var accessMod = parentInstance.Start.Text;
-            CheckPropFieldRuleAndUpdateErrorList(fieldName, accessMod);
+            CheckFieldRuleAndUpdateErrorList(fieldName, accessMod);
         }
 
-        private void CheckPropFieldRuleAndUpdateErrorList(string propOrFieldName, string accessMod)
+
+        private void CheckPropRuleAndUpdateErrorList(string propName, string accessMod)
         {
             string currentRegexString = string.Empty;
+            NameRuleViolations violation = NameRuleViolations.Default;
             switch (accessMod.ToLower())
             {
                 case "private":
                     //startswith _ and followed by camelCase (_fieldName)
                     currentRegexString = privatePropertyRegex;
+                    violation = NameRuleViolations.PrivatePropertyNameRuleViolation;
                     break;
                 case "public":
+                    violation = NameRuleViolations.PublicPropertyNameRuleViolation;
+                    currentRegexString = publicPropertyRegex;
+                    break;
                 case "protected":
                     //camelCase without _
+                    violation = NameRuleViolations.ProtectedPropertyNameRuleViolation;
+                    currentRegexString = publicPropertyRegex;
+                    break;
+                default:
+                    break;
+            }
+
+            var match = Regex.Match(propName, currentRegexString);
+            if (match.Length < propName.Length)
+            {
+                _nameRuleErrorsList.Add(new NameRuleError(violation, _currentNamespace, _currentClassName, string.Empty, propName));
+            }
+        }
+
+        private void CheckFieldRuleAndUpdateErrorList(string propOrFieldName, string accessMod)
+        {
+            string currentRegexString = string.Empty;
+            NameRuleViolations violation = NameRuleViolations.Default;
+            switch (accessMod.ToLower())
+            {
+                case "private":
+                    //startswith _ and followed by camelCase (_fieldName)
+                    currentRegexString = privatePropertyRegex;
+                    violation = NameRuleViolations.PrivateFieldNameRuleViolation;
+                    break;
+                case "public":
+                    violation = NameRuleViolations.PublicFieldNameRuleViolation;
+                    currentRegexString = publicPropertyRegex;
+                    break;
+                case "protected":
+                    //camelCase without _
+                    violation = NameRuleViolations.ProtectedFieldNameRuleViolation;
                     currentRegexString = publicPropertyRegex;
                     break;
                 default:
@@ -243,7 +281,7 @@ namespace CSharpCompilerLib.Rules
             var match = Regex.Match(propOrFieldName, currentRegexString);
             if (match.Length < propOrFieldName.Length)
             {
-                _nameRuleErrorsList.Add(new NameRuleError(NameRuleViolations.FieldNameRuleViolation, _currentNamespace, _currentClassName, string.Empty, propOrFieldName));
+                _nameRuleErrorsList.Add(new NameRuleError(violation, _currentNamespace, _currentClassName, string.Empty, propOrFieldName));
             }
         }
     }

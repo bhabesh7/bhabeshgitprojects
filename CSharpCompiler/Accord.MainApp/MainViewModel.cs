@@ -18,6 +18,19 @@ namespace Accord.MainApp
         ICodeParser _codeParser;
         IAnalysisManager _analysisManager;
 
+        private ICommand _violationSummaryCommand;
+
+        public ICommand ViolationSummaryCommand
+        {
+            get { return _violationSummaryCommand; }
+            set
+            {
+                _violationSummaryCommand = value;
+                RaisePropertyChanged(nameof(ViolationSummaryCommand));
+            }
+        }
+
+
         private ICommand analyzeCommand;
 
         public ICommand AnalyzeCommand
@@ -85,6 +98,10 @@ namespace Accord.MainApp
                 {
                     OrigCodeString = _codeParser.GetCodeFromFile(_selectedSourceCodeFile.FilePath);
                 }
+                else
+                {
+                    OrigCodeString = string.Empty;
+                }
                 RaisePropertyChanged(nameof(SelectedSourceCodeFile));
             }
         }
@@ -93,6 +110,7 @@ namespace Accord.MainApp
 
         public ObservableCollection<DocumentData> SourceCodeFilesCollection { get; set; }
 
+        public ObservableCollection<SummaryData> ViolationSummaryCollection { get; set; }
 
         public MainViewModel(IFolderScanner folderScanner, ICodeParser codeParser, IAnalysisManager analysisManager)
         {
@@ -100,11 +118,26 @@ namespace Accord.MainApp
             _codeParser = codeParser;
             _analysisManager = analysisManager;
             SourceCodeFilesCollection = new ObservableCollection<DocumentData>();
+            ViolationSummaryCollection = new ObservableCollection<SummaryData>();
             CodeRootLocation = @"b:\samplefile";
+            InitializeCommands();
+        }
+
+        private void InitializeCommands()
+        {
+            ViolationSummaryCommand = new DelegateCommand(() =>
+            {
+                PrepareViolationsSummary();
+
+            });
+
             LoadCodeCommand = new DelegateCommand(() =>
             {
                 //OpenFileDialog
 
+                //OrigCodeString = string.Empty;
+                SelectedSourceCodeFile = null;
+                SourceCodeFilesCollection?.Clear();
                 if (string.IsNullOrEmpty(CodeRootLocation))
                 {
                     return;
@@ -133,8 +166,84 @@ namespace Accord.MainApp
                     codeFile.AnalysisStatusInstance = status;
                     //codeFile.OrigString = codeString;
                 }
+
+                PrepareViolationsSummary();
             });
         }
 
+        private void PrepareViolationsSummary()
+        {
+            if (SourceCodeFilesCollection == null || SourceCodeFilesCollection?.Count == 0) { return; }
+
+            ViolationSummaryCollection?.Clear();
+
+            var unanalyzedFilesCount = SourceCodeFilesCollection.Count((x) => x.IsChecked == false);
+            ViolationSummaryCollection.Add(new SummaryData { SummaryName = "Unanalyzed File Count", SummaryCount = unanalyzedFilesCount });
+
+            var analyzedFilesCount = SourceCodeFilesCollection.Count((x) => x.IsChecked == true);
+            ViolationSummaryCollection.Add(new SummaryData { SummaryName = "Analyzed File Count", SummaryCount = analyzedFilesCount });
+
+            var okCodeFilesCount = SourceCodeFilesCollection.Count((x) => x.IsChecked == true && x.AnalysisStatusInstance == AnalysisStatus.Completed_Ok);
+            ViolationSummaryCollection.Add(new SummaryData { SummaryName = "OK Code File Count", SummaryCount = okCodeFilesCount });
+
+            var ngCodeFiles = SourceCodeFilesCollection.Where((x) => x.IsChecked == true && x.AnalysisStatusInstance == AnalysisStatus.Completed_NG).ToList();
+
+            var ngCodeFilesCount = ngCodeFiles.Count;
+            ViolationSummaryCollection.Add(new SummaryData { SummaryName = "NG Code File Count", SummaryCount = ngCodeFilesCount });
+            var totalNGDetected = ngCodeFiles.Where((y) => y.AnalysisResultDataInstance?.NameRuleErrors.Count > 0).ToList();
+            //ViolationSummaryCollection.Add(new SummaryData { SummaryName = "Total Violation Count", SummaryCount = totalNGDetected.Count });
+
+            var classViolations = totalNGDetected.Count((x) => x.AnalysisResultDataInstance.NameRuleErrors.
+            Any((y) => y.Violation == NameRuleViolations.ClassNameRuleViolation));
+            ViolationSummaryCollection.Add(new SummaryData { SummaryName = "Class Violations", SummaryCount = classViolations });
+
+            var methViolationsCount = totalNGDetected.Count((x) => x.AnalysisResultDataInstance.NameRuleErrors.
+           Any((y) => y.Violation == NameRuleViolations.MethodNameRuleViolation));
+
+            ViolationSummaryCollection.Add(new SummaryData { SummaryName = "Method Violations", SummaryCount = methViolationsCount });
+
+            var nsViolationsCount = totalNGDetected.Count((x) => x.AnalysisResultDataInstance.NameRuleErrors.
+          Any((y) => y.Violation == NameRuleViolations.NamespaceRuleViolation));
+            ViolationSummaryCollection.Add(new SummaryData { SummaryName = "Namespace Violations", SummaryCount = nsViolationsCount });
+
+
+            var paramViolationsCount = totalNGDetected.Count((x) => x.AnalysisResultDataInstance.NameRuleErrors.
+          Any((y) => y.Violation == NameRuleViolations.ParameterNameRuleViolation));
+
+            ViolationSummaryCollection.Add(new SummaryData { SummaryName = "Parameter Violations", SummaryCount = paramViolationsCount });
+
+
+            var privFieldViolationsCount = totalNGDetected.Count((x) => x.AnalysisResultDataInstance.NameRuleErrors.
+          Any((y) => y.Violation == NameRuleViolations.PrivateFieldNameRuleViolation));
+
+            ViolationSummaryCollection.Add(new SummaryData { SummaryName = "Private Field Violations", SummaryCount = privFieldViolationsCount });
+
+
+            var protFieldViolationsCount = totalNGDetected.Count((x) => x.AnalysisResultDataInstance.NameRuleErrors.
+          Any((y) => y.Violation == NameRuleViolations.ProtectedFieldNameRuleViolation));
+
+            ViolationSummaryCollection.Add(new SummaryData { SummaryName = "Protected Field Violations", SummaryCount = protFieldViolationsCount });
+
+
+            var pubFieldViolationsCount = totalNGDetected.Count((x) => x.AnalysisResultDataInstance.NameRuleErrors.
+          Any((y) => y.Violation == NameRuleViolations.PublicFieldNameRuleViolation));
+
+            ViolationSummaryCollection.Add(new SummaryData { SummaryName = "Public Field Violations", SummaryCount = pubFieldViolationsCount });
+
+
+            var privPropViolationsCount = totalNGDetected.Count((x) => x.AnalysisResultDataInstance.NameRuleErrors.
+        Any((y) => y.Violation == NameRuleViolations.PrivatePropertyNameRuleViolation));
+
+            ViolationSummaryCollection.Add(new SummaryData { SummaryName = "Private Property Violations", SummaryCount = privPropViolationsCount });
+
+
+            var protPropViolationsCount = totalNGDetected.Count((x) => x.AnalysisResultDataInstance.NameRuleErrors.
+    Any((y) => y.Violation == NameRuleViolations.ProtectedPropertyNameRuleViolation));
+            ViolationSummaryCollection.Add(new SummaryData { SummaryName = "Protected Property Violations", SummaryCount = protPropViolationsCount });
+
+            var pubPropViolationsCount = totalNGDetected.Count((x) => x.AnalysisResultDataInstance.NameRuleErrors.
+    Any((y) => y.Violation == NameRuleViolations.PublicPropertyNameRuleViolation));
+            ViolationSummaryCollection.Add(new SummaryData { SummaryName = "Public Property Violations", SummaryCount = pubPropViolationsCount });
+        }
     }
 }

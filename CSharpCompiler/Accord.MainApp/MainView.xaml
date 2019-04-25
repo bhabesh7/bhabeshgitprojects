@@ -8,7 +8,7 @@
         xmlns:pri="http://www.codeplex.com/prism"
         pri:ViewModelLocator.AutoWireViewModel="True"
         mc:Ignorable="d"
-        Title="MainView" WindowState="Maximized" >
+        Title="MainView" WindowState="Maximized"  x:Name="mainViewWin">
 
     <Grid>
         <Grid.Resources>
@@ -85,17 +85,34 @@
             </ListView.View>
         </ListView>
 
+
+        <TabControl Margin="5" Grid.Row="1" Grid.Column="1">
+            <TabItem Header="Violations Summary">
+                <!--<StackPanel Orientation="Vertical">-->
+                    <!--<Button Margin="10" Command="{Binding ElementName=mainViewWin, Path=DataContext.ViolationSummaryCommand}" Content="Get Summary" Width="100" Height="30"/>-->
+                    <ListView Margin="10" ItemsSource="{Binding ElementName=mainViewWin, Path=DataContext.ViolationSummaryCollection, UpdateSourceTrigger=PropertyChanged}" Height="250">
+                        <ListView.View>
+                            <GridView>
+                                <GridViewColumn Header="Statistic" Width="200" DisplayMemberBinding="{Binding SummaryName, UpdateSourceTrigger=PropertyChanged}">
+                                </GridViewColumn>
+                                <GridViewColumn Header="Count" Width="100" DisplayMemberBinding="{Binding SummaryCount, UpdateSourceTrigger=PropertyChanged}" />
+                            </GridView>
+                        </ListView.View>
+                    </ListView>
+                <!--</StackPanel>-->
+            </TabItem>
+        </TabControl>
         <!--<TextBox IsReadOnly="True" Margin="5" Grid.Row="1" Grid.Column="1" Width="300" 
                  FontSize="14" FontFamily="Calibri"
                  Text="{Binding ElementName=codeLV,Path=SelectedItem.OrigString, UpdateSourceTrigger=PropertyChanged}" TextWrapping="Wrap" AcceptsReturn="True"/>-->
 
-        <FlowDocumentReader Background="LightGray" Width="580" Grid.Row="1" Grid.Column="1" Height="300" Margin="10">
+        <!--<FlowDocumentReader Background="LightGray" Width="580" Grid.Row="1" Grid.Column="1" Height="300" Margin="10">
             <FlowDocument>
                 <Paragraph>
                     <Run Text="{Binding OrigCodeString, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}" />
                 </Paragraph>
             </FlowDocument>
-        </FlowDocumentReader>
+        </FlowDocumentReader>-->
 
         <Expander Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" ExpandDirection="Up" Header="Analysis Results" IsExpanded="{Binding IsResultExpanded, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
             <Grid  DataContext="{Binding ElementName=codeLV,Path=SelectedItem.AnalysisResultDataInstance, UpdateSourceTrigger=PropertyChanged}">
@@ -107,34 +124,62 @@
 
                 <!--<TextBox Width="580" Grid.Row="0" IsReadOnly="True" TextWrapping="Wrap" VerticalAlignment="Top" HorizontalAlignment="Left" Text="{Binding GeneratedInterfaceString}" ScrollViewer.CanContentScroll="True"></TextBox>-->
 
-                <FlowDocumentReader Background="LightGray" Width="580" Grid.Row="0" Grid.Column="0" Height="350">
+                <!--<FlowDocumentReader Background="LightGray" Width="580" Grid.Row="0" Grid.Column="0" Height="350">
                     <FlowDocument>
                         <Paragraph>
                             <Run x:Name="run" Text="{Binding Path=GeneratedInterfaceString}" />
                         </Paragraph>
                     </FlowDocument>
-                </FlowDocumentReader>
+                </FlowDocumentReader>-->
+                <!--<GridSplitter Grid.Column="1" Width="5" Height="350"/>-->
+                <TabControl Grid.Column="0" Grid.ColumnSpan="3" Height="350">
+                    <TabItem Header="Violations Details">
+                        <ListView ItemsSource="{Binding NameRuleErrors, UpdateSourceTrigger=PropertyChanged}">
+                            <ListView.View>
+                                <GridView>
+                                    <GridViewColumn Header="Violation" Width="200">
+                                        <GridViewColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <TextBlock Cursor="Hand" Text="{Binding NameRuleViolationString, UpdateSourceTrigger=PropertyChanged}" ToolTip="{Binding Suggestion, UpdateSourceTrigger=PropertyChanged}"/>
+                                            </DataTemplate>
+                                        </GridViewColumn.CellTemplate>
+                                    </GridViewColumn>
+                                    <GridViewColumn Header="NameSpace" Width="100" DisplayMemberBinding="{Binding NameSpace, UpdateSourceTrigger=PropertyChanged}" />
+                                    <GridViewColumn Header="ClassName" Width="100" DisplayMemberBinding="{Binding ClassName, UpdateSourceTrigger=PropertyChanged}" />
+                                    <GridViewColumn Header="Method" Width="100" DisplayMemberBinding="{Binding Method, UpdateSourceTrigger=PropertyChanged}" />
+                                    <GridViewColumn Header="Param" Width="100" DisplayMemberBinding="{Binding Parameter, UpdateSourceTrigger=PropertyChanged}" />
 
-                <GridSplitter Grid.Column="1" Width="5" Height="350"/>
+                                </GridView>
+                            </ListView.View>
+                        </ListView>
+                    </TabItem>
+                 
+                    <TabItem Header="Extracted Interface">
+                        <UniformGrid Columns="2">
+                            <Border BorderBrush="Black" BorderThickness="2">
+                                <FlowDocumentReader Background="LightGray" Width="580" Height="300" Margin="10">
+                                    <FlowDocument>
+                                        <Paragraph>
+                                            <Run Text="{Binding ElementName=mainViewWin,Path=DataContext.OrigCodeString, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}" />
+                                        </Paragraph>
+                                    </FlowDocument>
+                                </FlowDocumentReader>
+                            </Border>
+                            <Border BorderBrush="Black" BorderThickness="2">
+                                <FlowDocumentReader Background="LightGray" Width="580" Height="300" Margin="10">
+                                    <FlowDocument Background="LightCoral">
+                                        <Paragraph>
+                                            <Run x:Name="run" Text="{Binding Path=GeneratedInterfaceString}" />
+                                        </Paragraph>
+                                    </FlowDocument>
+                                </FlowDocumentReader>
+                            </Border>
 
-                <ListView Grid.Column="2" ItemsSource="{Binding NameRuleErrors, UpdateSourceTrigger=PropertyChanged}">
-                    <ListView.View>
-                        <GridView>
-                            <GridViewColumn Header="Violation" Width="200">
-                                <GridViewColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <TextBlock Cursor="Hand" Text="{Binding NameRuleViolationString, UpdateSourceTrigger=PropertyChanged}" ToolTip="{Binding Suggestion, UpdateSourceTrigger=PropertyChanged}"/>
-                                    </DataTemplate>
-                                </GridViewColumn.CellTemplate>
-                            </GridViewColumn>
-                            <GridViewColumn Header="NameSpace" Width="100" DisplayMemberBinding="{Binding NameSpace, UpdateSourceTrigger=PropertyChanged}" />
-                            <GridViewColumn Header="ClassName" Width="100" DisplayMemberBinding="{Binding ClassName, UpdateSourceTrigger=PropertyChanged}" />
-                            <GridViewColumn Header="Method" Width="100" DisplayMemberBinding="{Binding Method, UpdateSourceTrigger=PropertyChanged}" />
-                            <GridViewColumn Header="Param" Width="100" DisplayMemberBinding="{Binding Parameter, UpdateSourceTrigger=PropertyChanged}" />
+                        </UniformGrid>
 
-                        </GridView>
-                    </ListView.View>
-                </ListView>
+
+                    </TabItem>
+                </TabControl>
             </Grid>
         </Expander>
     </Grid>

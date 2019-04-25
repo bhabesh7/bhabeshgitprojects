@@ -72,7 +72,7 @@ namespace CSharpCompilerLib
             var currentNamespace = tokenStream.GetText(id.Start, id.Stop);
             var formattedNs = string.Format("namespace {0}", currentNamespace);
             _interfacePreProcTemplate.AppendLine(formattedNs);
-            _interfacePreProcTemplate.AppendLine("{");
+            _interfacePreProcTemplate.Append("{");
         }
 
         public override void ExitNamespace_declaration([NotNull] Namespace_declarationContext context)
