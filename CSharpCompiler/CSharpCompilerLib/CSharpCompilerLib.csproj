@@ -36,6 +36,7 @@
     <Reference Include="Antlr4.Runtime, Version=4.6.0.0, Culture=neutral, PublicKeyToken=09abb75b9ed49849, processorArchitecture=MSIL">
       <HintPath>..\packages\Antlr4.Runtime.4.6.6\lib\net45\Antlr4.Runtime.dll</HintPath>
     </Reference>
+    <Reference Include="Prism, Version=7.1.0.431, Culture=neutral, PublicKeyToken=40ee6c3a2184dc59" />
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Core" />
@@ -59,7 +60,15 @@
     </Compile>
     <Compile Include="AnalysisManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RegexConstants.cs" />
+    <Compile Include="Rules\BaseValidationAttribute.cs" />
+    <Compile Include="Rules\ClassNameValidationAttribute.cs" />
     <Compile Include="Rules\InterfaceExtractorRule.cs" />
+    <Compile Include="Rules\MethodNameValidationAttribute.cs" />
+    <Compile Include="Rules\ParameterNameValidationAttribute.cs" />
+    <Compile Include="Rules\PrivatePropertyValidationAttribute.cs" />
+    <Compile Include="Rules\ProtectedPropertyValidationAttribute.cs" />
+    <Compile Include="Rules\PublicPropertyValidationAttribute.cs" />
   </ItemGroup>
   <ItemGroup>
     <Antlr4 Include="Grammar\CSharpLexer.g4">

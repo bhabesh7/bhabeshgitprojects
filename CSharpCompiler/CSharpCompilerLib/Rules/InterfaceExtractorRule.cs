@@ -3,6 +3,7 @@ using Antlr4.Runtime;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -44,23 +45,35 @@ namespace CSharpCompilerLib.Rules
             {
                 return;
             }
-            var match = Regex.Match(_currentNamespace, pascalCaseNamespaceRegex);
+            var match = Regex.Match(_currentNamespace, RegexConstants.PascalCaseNamespaceRegex);
             if (match.Length < _currentNamespace.Length)
             {
                 _nameRuleErrorsList.Add(new NameRuleError(NameRuleViolations.NamespaceRuleViolation, _currentNamespace, string.Empty, string.Empty, string.Empty));
             }
         }
 
+        [ClassNameValidationAttribute()]
         public void Enter_ClassDefinition(Class_definitionContext context)
         {
             var id = context.identifier();
             _currentClassName = _tokenStream.GetText(id.Start, id.Stop);
 
-            var match = Regex.Match(_currentClassName, pascalCaseClassMethodRegex);
-            if (match.Length < _currentClassName.Length)
+            var classRuleAttr = ValidationRuleProvider<ClassNameValidationAttribute>(nameof(Enter_ClassDefinition)) as ClassNameValidationAttribute;
+            
+            if (classRuleAttr != null)
             {
-                _nameRuleErrorsList.Add(new NameRuleError(NameRuleViolations.ClassNameRuleViolation, _currentNamespace, _currentClassName, string.Empty, string.Empty));
+                var nameRuleError = classRuleAttr.Validate(_currentNamespace, _currentClassName, string.Empty, string.Empty, string.Empty);
+                if (nameRuleError != null)
+                {
+                    _nameRuleErrorsList.Add(nameRuleError);
+                }
             }
+
+            //var match = Regex.Match(_currentClassName, RegexConstants.PascalCaseClassMethodRegex);
+            //if (match.Length < _currentClassName.Length)
+            //{
+            //    _nameRuleErrorsList.Add(new NameRuleError(NameRuleViolations.ClassNameRuleViolation, _currentNamespace, _currentClassName, string.Empty, string.Empty));
+            //}
 
             var tpcc = context.type_parameter_constraints_clauses();
             var tpl = context.type_parameter_list();
@@ -99,31 +112,57 @@ namespace CSharpCompilerLib.Rules
             _interfaceDefinitionBuilder.Append("}");
 
         }
-        const string pascalCaseClassMethodRegex = "[A-Z]([A-Z0-9]*[a-z][a-z0-9]*[A-Z]|[a-z0-9]*[A-Z][A-Z0-9]*[a-z])[A-Za-z0-9]*";
-        const string camelCaseParameterRegex = "[a-z]([A-Z0-9]*[a-z][a-z0-9]*[A-Z]|[a-z0-9]*[A-Z][A-Z0-9]*[a-z])[A-Za-z0-9]*";
-        const string pascalCaseNamespaceRegex = "[A-Z]([A-Z0-9]*[a-z][a-z0-9]*[A-Z]|[a-z0-9]*[A-Z][A-Z0-9]*[a-z])[A-Za-z0-9]*";
-        const string privatePropertyRegex = "^_[a-z]+[A-Z0-9]+[a-z0-9]*";
-        const string publicPropertyRegex = "^[A-Z]+[a-z0-9]+[A-Z0-9]*[a-z0-9]+";
+        
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="methodName"></param>
+        /// <returns></returns>
+        private BaseValidationAttribute ValidationRuleProvider<T>(string methodName) where T : BaseValidationAttribute
+        {
+            var currentMethod = typeof(InterfaceExtractorRule).GetMethod(methodName);
+            //var currentMethod = MethodBase.GetCurrentMethod(); //slower meth apparently
+            if (currentMethod == null) { return null; }
+            var ruleAttr = currentMethod.GetCustomAttributes(false).OfType<T>().FirstOrDefault();
+            return ruleAttr;
+        }
 
+        [MethodNameValidation()]        
         public void Enter_MethodDeclaration(Method_declarationContext context)
         {
             _currentMethodName = context.method_member_name().GetText();
 
-
-            var match = Regex.Match(_currentMethodName, pascalCaseClassMethodRegex);
-            if (match.Length < _currentMethodName.Length)
+            var ruleAttr = ValidationRuleProvider<MethodNameValidationAttribute>(nameof(Enter_MethodDeclaration)) as MethodNameValidationAttribute;
+            if (ruleAttr != null)
             {
-                _nameRuleErrorsList.Add(new NameRuleError(NameRuleViolations.MethodNameRuleViolation,
-                    _currentNamespace, _currentClassName, _currentMethodName, string.Empty));
+                var nameRuleError = ruleAttr.Validate(_currentNamespace, _currentClassName, _currentMethodName, string.Empty, string.Empty);
+                if (nameRuleError != null)
+                {
+                    _nameRuleErrorsList.Add(nameRuleError);
+                }
             }
 
-
             var paramses = context.formal_parameter_list();
+            string parameters = HandleMethodParameters(paramses);
+            ExtractInterfaceMethodSignature(context, parameters);
+        }
+
+        /// <summary>
+        /// Detects and validates parameters
+        /// </summary>
+        /// <param name="paramses"></param>
+        /// <returns></returns>
+        [ParameterNameValidation()]
+        private string HandleMethodParameters(Formal_parameter_listContext paramses)
+        {
             var parameters = string.Empty;
             if (paramses != null)
             {
                 //Method parameters detected
                 var paramArgs = paramses.fixed_parameters();
+                var paramRuleAttr = ValidationRuleProvider<ParameterNameValidationAttribute>(nameof(HandleMethodParameters)) as ParameterNameValidationAttribute;
+
                 for (int i = 0; i < paramArgs?.children.Count; i++)
                 {
                     if (i % 2 != 0)
@@ -133,16 +172,29 @@ namespace CSharpCompilerLib.Rules
                     var p = paramArgs.children[i] as Fixed_parameterContext;
                     var paramName = p.Stop.Text;
 
-                    var matchP = Regex.Match(paramName, camelCaseParameterRegex);
-                    if (matchP.Length < paramName.Length)
+                    if (paramRuleAttr != null)
                     {
-                        _nameRuleErrorsList.Add(new NameRuleError(NameRuleViolations.ParameterNameRuleViolation, _currentNamespace, _currentClassName, _currentMethodName, paramName));
+                        var paramNameRuleError = paramRuleAttr.Validate(_currentNamespace, _currentClassName, _currentMethodName, paramName, string.Empty);
+                        if (paramNameRuleError != null)
+                        {
+                            _nameRuleErrorsList.Add(paramNameRuleError);
+                        }
                     }
                 }
                 parameters = _tokenStream.GetText(paramses.Start, paramses.Stop);
             }
-            if (_classAlreadyImplementsInterface) { return; }
 
+            return parameters;
+        }
+
+        /// <summary>
+        /// Extracts interface from a concrete C# class post method inspection
+        /// </summary>
+        /// <param name="context"></param>
+        /// <param name="parameters"></param>
+        private void ExtractInterfaceMethodSignature(Method_declarationContext context, string parameters)
+        {
+            if (_classAlreadyImplementsInterface) { return; }
 
             var compiledMethod = string.Empty;
             var returnType = string.Empty;
@@ -159,10 +211,6 @@ namespace CSharpCompilerLib.Rules
             {
                 var parent = context.parent as Common_member_declarationContext;
                 var accessModPar = parent.Parent.Parent as Class_member_declarationsContext;
-                if (accessModPar == null)
-                {
-
-                }
                 accessMod = accessModPar.Start.Text;
                 returnType = _tokenStream.GetText(parent.Start, parent.Start);
                 compiledMethod = GetCompiledMethodNameIfPublic(parameters, returnType, accessMod);
@@ -222,7 +270,14 @@ namespace CSharpCompilerLib.Rules
             CheckFieldRuleAndUpdateErrorList(fieldName, accessMod);
         }
 
-
+        /// <summary>
+        /// Check Prop rule
+        /// </summary>
+        /// <param name="propName"></param>
+        /// <param name="accessMod"></param>
+        [PublicPropertyValidation()]
+        [ProtectedPropertyValidation()]
+        [PrivatePropertyValidation()]
         private void CheckPropRuleAndUpdateErrorList(string propName, string accessMod)
         {
             string currentRegexString = string.Empty;
@@ -231,29 +286,51 @@ namespace CSharpCompilerLib.Rules
             {
                 case "private":
                     //startswith _ and followed by camelCase (_fieldName)
-                    currentRegexString = privatePropertyRegex;
-                    violation = NameRuleViolations.PrivatePropertyNameRuleViolation;
+                    //currentRegexString = RegexConstants.PrivatePropertyRegex;
+                    //violation = NameRuleViolations.PrivatePropertyNameRuleViolation;
+                    var privRule = ValidationRuleProvider<PrivatePropertyValidationAttribute>(nameof(CheckPropRuleAndUpdateErrorList)) as PrivatePropertyValidationAttribute;
+                    if(privRule !=null)
+                    {
+                        privRule.Validate(_currentNamespace, _currentClassName, _currentMethodName, string.Empty, propName);
+                    }
+
                     break;
                 case "public":
-                    violation = NameRuleViolations.PublicPropertyNameRuleViolation;
-                    currentRegexString = publicPropertyRegex;
+                    //violation = NameRuleViolations.PublicPropertyNameRuleViolation;
+                    //currentRegexString = RegexConstants.PublicPropertyRegex;
+                    var pubRule = ValidationRuleProvider<PublicPropertyValidationAttribute>(nameof(CheckPropRuleAndUpdateErrorList)) as PublicPropertyValidationAttribute;
+                    if (pubRule != null)
+                    {
+                        pubRule.Validate(_currentNamespace, _currentClassName, _currentMethodName, string.Empty, propName);
+                    }
                     break;
                 case "protected":
                     //camelCase without _
-                    violation = NameRuleViolations.ProtectedPropertyNameRuleViolation;
-                    currentRegexString = publicPropertyRegex;
+                    //violation = NameRuleViolations.ProtectedPropertyNameRuleViolation;
+                    //currentRegexString = RegexConstants.PublicPropertyRegex;
+
+                    var protRule = ValidationRuleProvider<ProtectedPropertyValidationAttribute>(nameof(CheckPropRuleAndUpdateErrorList)) as ProtectedPropertyValidationAttribute;
+                    if (protRule != null)
+                    {
+                        protRule.Validate(_currentNamespace, _currentClassName, _currentMethodName, string.Empty, propName);
+                    }
                     break;
                 default:
                     break;
             }
 
-            var match = Regex.Match(propName, currentRegexString);
-            if (match.Length < propName.Length)
-            {
-                _nameRuleErrorsList.Add(new NameRuleError(violation, _currentNamespace, _currentClassName, string.Empty, propName));
-            }
+            //var match = Regex.Match(propName, currentRegexString);
+            //if (match.Length < propName.Length)
+            //{
+            //    _nameRuleErrorsList?.Add(new NameRuleError(violation, _currentNamespace, _currentClassName, string.Empty, propName));
+            //}
         }
 
+        /// <summary>
+        /// Check Field Rule
+        /// </summary>
+        /// <param name="propOrFieldName"></param>
+        /// <param name="accessMod"></param>
         private void CheckFieldRuleAndUpdateErrorList(string propOrFieldName, string accessMod)
         {
             string currentRegexString = string.Empty;
@@ -262,17 +339,17 @@ namespace CSharpCompilerLib.Rules
             {
                 case "private":
                     //startswith _ and followed by camelCase (_fieldName)
-                    currentRegexString = privatePropertyRegex;
+                    currentRegexString = RegexConstants.PrivatePropertyRegex;
                     violation = NameRuleViolations.PrivateFieldNameRuleViolation;
                     break;
                 case "public":
                     violation = NameRuleViolations.PublicFieldNameRuleViolation;
-                    currentRegexString = publicPropertyRegex;
+                    currentRegexString = RegexConstants.PublicPropertyRegex;
                     break;
                 case "protected":
                     //camelCase without _
                     violation = NameRuleViolations.ProtectedFieldNameRuleViolation;
-                    currentRegexString = publicPropertyRegex;
+                    currentRegexString = RegexConstants.PublicPropertyRegex;
                     break;
                 default:
                     break;
@@ -281,7 +358,7 @@ namespace CSharpCompilerLib.Rules
             var match = Regex.Match(propOrFieldName, currentRegexString);
             if (match.Length < propOrFieldName.Length)
             {
-                _nameRuleErrorsList.Add(new NameRuleError(violation, _currentNamespace, _currentClassName, string.Empty, propOrFieldName));
+                _nameRuleErrorsList?.Add(new NameRuleError(violation, _currentNamespace, _currentClassName, string.Empty, propOrFieldName));
             }
         }
     }
