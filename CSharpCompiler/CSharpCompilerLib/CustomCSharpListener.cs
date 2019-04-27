@@ -16,8 +16,7 @@ namespace CSharpCompilerLib
 {
     public class CustomCSharpListener : CSharpParserBaseListener
     {
-        StringBuilder _interfacePreProcTemplate = new StringBuilder();
-
+        //StringBuilder _interfacePreProcTemplate = new StringBuilder();
         CSharpParser _parser;
         //StringBuilder _interfaceDefinitionBuilder = new StringBuilder();
         InterfaceExtractorRule _interfaceExtractRule;
@@ -27,32 +26,32 @@ namespace CSharpCompilerLib
         {
             _parser = parser;
             _interfaceExtractRule = new InterfaceExtractorRule(_parser.InputStream as ITokenStream);
-            _interfacePreProcTemplate = new StringBuilder();
+            //_interfacePreProcTemplate = new StringBuilder();
         }
 
         public string GetConvertedInterfaceString()
         {
-            var templateNs = _interfacePreProcTemplate.ToString();
-            var code = _interfaceExtractRule.GetExtactedInterface();
+            //var templateNs = _interfacePreProcTemplate.ToString();
+            return _interfaceExtractRule.GetExtactedInterface();
 
-            //if (string.IsNullOrEmpty(templateNs) && string.IsNullOrEmpty(code))
-            //{
-            //    return string.Empty;
-            //}
-            //if (!string.IsNullOrEmpty(templateNs) && string.IsNullOrEmpty(code))
-            //{
-            //    return string.Empty;
-            //}
-            //else if(string.IsNullOrEmpty(templateNs) && !string.IsNullOrEmpty(code))
-            //{
-            //    return code;
-            //}
-            //else if (!string.IsNullOrEmpty(templateNs) && !string.IsNullOrEmpty(code))
-            //{
-            //    return (templateNs + "\n" + code + "\n" + "}");
-            //}
+            ////if (string.IsNullOrEmpty(templateNs) && string.IsNullOrEmpty(code))
+            ////{
+            ////    return string.Empty;
+            ////}
+            ////if (!string.IsNullOrEmpty(templateNs) && string.IsNullOrEmpty(code))
+            ////{
+            ////    return string.Empty;
+            ////}
+            ////else if(string.IsNullOrEmpty(templateNs) && !string.IsNullOrEmpty(code))
+            ////{
+            ////    return code;
+            ////}
+            ////else if (!string.IsNullOrEmpty(templateNs) && !string.IsNullOrEmpty(code))
+            ////{
+            ////    return (templateNs + "\n" + code + "\n" + "}");
+            ////}
 
-            return string.IsNullOrEmpty(templateNs) ? code : (templateNs + "\n" + code + "\n" + "}");
+            //return string.IsNullOrEmpty(templateNs) ? code : (templateNs + "\n" + code + "\n" + "}");
         }
 
         public IList<NameRuleError> GetNameRuleErrorList()
@@ -65,14 +64,7 @@ namespace CSharpCompilerLib
         public override void EnterNamespace_declaration([NotNull] Namespace_declarationContext context)
         {
             base.EnterNamespace_declaration(context);
-            _interfaceExtractRule.Enter_NamespaceDefinition(context);
-
-            var id = context.qualified_identifier();
-            var tokenStream = _parser.InputStream as ITokenStream;
-            var currentNamespace = tokenStream.GetText(id.Start, id.Stop);
-            var formattedNs = string.Format("namespace {0}", currentNamespace);
-            _interfacePreProcTemplate.AppendLine(formattedNs);
-            _interfacePreProcTemplate.Append("{");
+            _interfaceExtractRule.Enter_Namespace_declaration(context);          
         }
 
         public override void ExitNamespace_declaration([NotNull] Namespace_declarationContext context)
@@ -160,45 +152,23 @@ namespace CSharpCompilerLib
 
         public override void EnterUsingNamespaceDirective([NotNull] UsingNamespaceDirectiveContext context)
         {
-            base.EnterUsingNamespaceDirective(context);
-            var tokenStream = _parser.InputStream as ITokenStream;
-            var text = tokenStream.GetText(context.Start, context.Stop);
-            _interfacePreProcTemplate.AppendLine(text);
+            _interfaceExtractRule.EnterUsingNamespaceDirective(context);
         }
 
         public override void EnterMethod_declaration([NotNull] CSharpParser.Method_declarationContext context)
         {
             base.EnterMethod_declaration(context);
             _interfaceExtractRule.Enter_MethodDeclaration(context);
-            //var test = context.GetText();
-
-            //var methodName =context.method_member_name().GetText();           
-            //var paramses = context.formal_parameter_list();
-            //var tokenStream = _parser.InputStream as ITokenStream;
-            //var parameters =tokenStream.GetText(paramses.Start, paramses.Stop);
-            //var compiledMethod = string.Empty;
-            //var returnType = string.Empty;
-
-            //if (context.parent is Typed_member_declarationContext)
-            //{
-            //    var parent = context.parent as Typed_member_declarationContext;
-            //    returnType = tokenStream.GetText(parent.Start, parent.Start);
-            //    compiledMethod = string.Format("\t{0} {1} ({2});", returnType, methodName, parameters);
-            //}
-            //else if (context.parent is Common_member_declarationContext)
-            //{
-            //    var parent = context.parent as Common_member_declarationContext;
-            //    returnType = tokenStream.GetText(parent.Start, parent.Start);
-            //    compiledMethod = string.Format("\t{0} {1} ({2});", returnType, methodName, parameters);
-            //}            
-
-            //_interfaceDefinitionBuilder.AppendLine(compiledMethod);
-
         }
 
         public override void ExitMethod_declaration([NotNull] CSharpParser.Method_declarationContext context)
         {
             base.ExitMethod_declaration(context);
+        }
+
+        public override void EnterMethod_body([NotNull] Method_bodyContext context)
+        {
+            _interfaceExtractRule.EnterMethod_body(context);
         }
 
     }

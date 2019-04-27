@@ -64,6 +64,7 @@
     <Compile Include="Rules\BaseValidationAttribute.cs" />
     <Compile Include="Rules\ClassNameValidationAttribute.cs" />
     <Compile Include="Rules\InterfaceExtractorRule.cs" />
+    <Compile Include="Rules\MaxLengthValidationAttribute.cs" />
     <Compile Include="Rules\MethodNameValidationAttribute.cs" />
     <Compile Include="Rules\ParameterNameValidationAttribute.cs" />
     <Compile Include="Rules\PrivatePropertyValidationAttribute.cs" />

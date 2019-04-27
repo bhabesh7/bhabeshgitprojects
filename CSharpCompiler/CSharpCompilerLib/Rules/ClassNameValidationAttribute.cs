@@ -11,7 +11,7 @@ namespace CSharpCompilerLib.Rules
     {
         public ClassNameValidationAttribute()
         {
-            ValidationRegexPattern = RegexConstants.PascalCaseClassMethodRegex;
+            ValidationRegexPattern = RegexConstants.PascalCaseClassRegex;
             NameRuleViolationInstance = NameRuleViolations.ClassNameRuleViolation;
         }
 

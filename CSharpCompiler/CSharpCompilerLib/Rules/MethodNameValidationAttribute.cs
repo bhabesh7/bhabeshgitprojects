@@ -16,7 +16,7 @@ namespace CSharpCompilerLib.Rules
         /// <param name="validationRegex">Provide the Regex upon which validation will take place</param>
         public MethodNameValidationAttribute()
         {
-            ValidationRegexPattern = RegexConstants.PascalCaseClassMethodRegex;            
+            ValidationRegexPattern = RegexConstants.PascalCaseMethodRegex;            
             NameRuleViolationInstance = NameRuleViolations.MethodNameRuleViolation;
         }        
         

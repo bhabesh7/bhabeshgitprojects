@@ -10,12 +10,13 @@ namespace CSharpCompilerLib.Rules
 {
     public class BaseValidationAttribute: Attribute
     {
-        private string _className;
-        private string _currentNamespaceName;
-        private string _currentMethodName;
-        private string _parameterName;
-        private string _propertyOrFieldName;
+        protected string _className;
+        protected string _currentNamespaceName;
+        protected string _currentMethodName;
+        protected string _parameterName;
+        protected string _propertyOrFieldName;
         
+        protected int MaxLenth { get; set; }
         protected string ValidationRegexPattern { get; set; }
         protected NameRuleViolations NameRuleViolationInstance { get; set; }
 
@@ -24,6 +25,15 @@ namespace CSharpCompilerLib.Rules
             NameRuleViolationInstance = NameRuleViolations.Default;
         }
                
+        /// <summary>
+        /// Ctor only to be used when doing Length validation
+        /// </summary>
+        /// <param name="maxLength"></param>
+        public BaseValidationAttribute(int maxLength, NameRuleViolations violationType)
+        {
+            MaxLenth = maxLength;
+            NameRuleViolationInstance = violationType;
+        }
 
         public virtual NameRuleError Validate(string namespaceName, string className, string methodName, string parameterName, string propertyOrFieldName)
         {
@@ -35,7 +45,7 @@ namespace CSharpCompilerLib.Rules
             return default(NameRuleError);
         }
 
-        protected NameRuleError ValidateString(string item)
+        protected virtual NameRuleError ValidateString(string item)
         {
             var match = Regex.Match(item, ValidationRegexPattern);
             if (match.Length < item.Length)

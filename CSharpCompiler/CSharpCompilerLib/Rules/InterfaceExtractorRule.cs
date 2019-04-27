@@ -15,6 +15,8 @@ namespace CSharpCompilerLib.Rules
     {
         ITokenStream _tokenStream;
         StringBuilder _interfaceDefinitionBuilder = new StringBuilder();
+        StringBuilder _interfacePreProcTemplate = new StringBuilder();
+
         IList<NameRuleError> _nameRuleErrorsList = new List<NameRuleError>();
         private string _currentClassName = string.Empty;
         private string _currentNamespace = string.Empty;
@@ -28,7 +30,26 @@ namespace CSharpCompilerLib.Rules
 
         public string GetExtactedInterface()
         {
-            return _interfaceDefinitionBuilder.ToString();
+            var templateNs = _interfacePreProcTemplate.ToString();
+            var code = _interfaceDefinitionBuilder.ToString();
+            //if (string.IsNullOrEmpty(templateNs) && string.IsNullOrEmpty(code))
+            //{
+            //    return string.Empty;
+            //}
+            //if (!string.IsNullOrEmpty(templateNs) && string.IsNullOrEmpty(code))
+            //{
+            //    return string.Empty;
+            //}
+            //else if(string.IsNullOrEmpty(templateNs) && !string.IsNullOrEmpty(code))
+            //{
+            //    return code;
+            //}
+            //else if (!string.IsNullOrEmpty(templateNs) && !string.IsNullOrEmpty(code))
+            //{
+            //    return (templateNs + "\n" + code + "\n" + "}");
+            //}
+
+            return string.IsNullOrEmpty(templateNs) ? code : (templateNs + "\n" + code + "\n" + "}");            
         }
 
         public IList<NameRuleError> GetNameRuleErrorList()
@@ -37,7 +58,14 @@ namespace CSharpCompilerLib.Rules
         }
 
 
-        public void Enter_NamespaceDefinition(Namespace_declarationContext context)
+        public void EnterUsingNamespaceDirective(UsingNamespaceDirectiveContext context)
+        {                        
+            var text = _tokenStream.GetText(context.Start, context.Stop);
+            _interfacePreProcTemplate.AppendLine(text);
+        }
+
+
+        public void Enter_Namespace_declaration(Namespace_declarationContext context)
         {
             var id = context.qualified_identifier();
             _currentNamespace = _tokenStream.GetText(id.Start, id.Stop);
@@ -49,7 +77,12 @@ namespace CSharpCompilerLib.Rules
             if (match.Length < _currentNamespace.Length)
             {
                 _nameRuleErrorsList.Add(new NameRuleError(NameRuleViolations.NamespaceRuleViolation, _currentNamespace, string.Empty, string.Empty, string.Empty));
-            }
+            }            
+            
+            var currentNamespace = _tokenStream.GetText(id.Start, id.Stop);
+            var formattedNs = string.Format("namespace {0}", currentNamespace);
+            _interfacePreProcTemplate.AppendLine(formattedNs);
+            _interfacePreProcTemplate.Append("{");
         }
 
         [ClassNameValidationAttribute()]
@@ -128,7 +161,8 @@ namespace CSharpCompilerLib.Rules
             return ruleAttr;
         }
 
-        [MethodNameValidation()]        
+        [MethodNameValidation()]     
+        [MaxLengthValidation(50, NameRuleViolations.MethodNameRuleViolation)]
         public void Enter_MethodDeclaration(Method_declarationContext context)
         {
             _currentMethodName = context.method_member_name().GetText();
@@ -137,6 +171,17 @@ namespace CSharpCompilerLib.Rules
             if (ruleAttr != null)
             {
                 var nameRuleError = ruleAttr.Validate(_currentNamespace, _currentClassName, _currentMethodName, string.Empty, string.Empty);
+                if (nameRuleError != null)
+                {
+                    _nameRuleErrorsList.Add(nameRuleError);
+                }
+            }
+
+
+            var maxLenAttr = ValidationRuleProvider<MaxLengthValidationAttribute>(nameof(Enter_MethodDeclaration)) as MaxLengthValidationAttribute;
+            if (maxLenAttr != null)
+            {
+                var nameRuleError = maxLenAttr.Validate(_currentNamespace, _currentClassName, _currentMethodName, string.Empty, string.Empty);
                 if (nameRuleError != null)
                 {
                     _nameRuleErrorsList.Add(nameRuleError);
@@ -238,7 +283,7 @@ namespace CSharpCompilerLib.Rules
             return compiledMethod;
         }
 
-
+        
         public void Enter_Property_declaration(Property_declarationContext context)
         {
             var propName = context.Start.Text;
@@ -360,6 +405,18 @@ namespace CSharpCompilerLib.Rules
             {
                 _nameRuleErrorsList?.Add(new NameRuleError(violation, _currentNamespace, _currentClassName, string.Empty, propOrFieldName));
             }
+        }
+
+        public void EnterMethod_body(Method_bodyContext context)
+        {
+            //base.EnterMethod_body(context);
+            var body = _tokenStream.GetText(context.Start, context.Stop);
+            var lines = body.Split('\n').Length;
+            if (lines > 50)
+            {
+                _nameRuleErrorsList?.Add(new NameRuleError(NameRuleViolations.LargeMethodBodyRuleViolation, _currentNamespace, _currentClassName, _currentMethodName, string.Empty));
+            }
+
         }
     }
 }

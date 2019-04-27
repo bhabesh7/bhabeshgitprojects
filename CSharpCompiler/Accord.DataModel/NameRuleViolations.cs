@@ -33,5 +33,9 @@ namespace Accord.DataModel
         ProtectedPropertyNameRuleViolation,
         [Description("Private Property name must follow camel case starting with _ for Eg. _myFieldName")]
         PrivatePropertyNameRuleViolation,
+        [Description("Method Body must be less than 50 lines")]
+        LargeMethodBodyRuleViolation,
+        [Description("Name must be less than 50 characters")]
+        NameLengthExceededRuleViolation
     }
 }
