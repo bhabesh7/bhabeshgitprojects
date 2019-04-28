@@ -38,6 +38,7 @@ namespace Accord.MainApp
 
                 var selectedSeries = (PieSeries)chartpoint.SeriesView;
                 selectedSeries.PushOut = 8;
+                //selectedSeries.Name
             }
             catch (Exception)
             {                

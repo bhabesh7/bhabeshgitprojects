@@ -9,7 +9,7 @@
         pri:ViewModelLocator.AutoWireViewModel="True"
         xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
         mc:Ignorable="d"
-        Title="MainView" WindowState="Maximized"  x:Name="mainViewWin">
+        Title="Code Accord by Bhabesh Acharya" WindowState="Maximized"  x:Name="mainViewWin">
 
     <Grid>
         <Grid.Resources>
@@ -30,11 +30,11 @@
         <Button Content="Build" Margin="5" Grid.Row="1" HorizontalAlignment="Right" Grid.Column="0" Height="35" Width="100" Command="{Binding BuildCommand}"/>
         <TextBox IsReadOnly="True" Margin="5" Grid.Row="2" Grid.Column="0" Width="{Binding ElementName=win, Path=ActualWidth}"  Height="150"
                  Text="{Binding OutputText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/> -->
-        <TextBox Text="{Binding CodeRootLocation, UpdateSourceTrigger=PropertyChanged}" Margin="0,5,0.4,5" Width="Auto">
+        <TextBox Text="{Binding CodeRootLocation, UpdateSourceTrigger=PropertyChanged}" Margin="0,5,0.4,5" Width="{Binding ElementName=codeLV, Path=ActualWidth}">
             <TextBox.Resources>
                 <Style TargetType="{x:Type TextBox}">
                     <Setter Property="Width" Value="120"/>
-                    <Setter Property="Height" Value="30"/>
+                    <Setter Property="Height" Value="25"/>
                     <Setter Property="Margin" Value="5"/>
                 </Style>
             </TextBox.Resources>
@@ -61,7 +61,7 @@
             </Button>
         </UniformGrid>
 
-        <ListView x:Name="codeLV" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="1" ItemsSource="{Binding SourceCodeFilesCollection, UpdateSourceTrigger=PropertyChanged}" SelectedItem="{Binding SelectedSourceCodeFile}">
+        <ListView Margin="5" x:Name="codeLV" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="1" ItemsSource="{Binding SourceCodeFilesCollection, UpdateSourceTrigger=PropertyChanged}" SelectedItem="{Binding SelectedSourceCodeFile}">
             <ListView.View>
                 <GridView>
                     <GridViewColumn Header="FileName" Width="380" DisplayMemberBinding="{Binding FileName, UpdateSourceTrigger=PropertyChanged}">
@@ -120,10 +120,10 @@
                     </lvc:PieChart>
                 </Grid>
             </TabItem>
-            <TabItem Header="Violation Details">
+            <TabItem Header="Violation Table">
                 <!--<StackPanel Orientation="Vertical">-->
                 <!--<Button Margin="10" Command="{Binding ElementName=mainViewWin, Path=DataContext.ViolationSummaryCommand}" Content="Get Summary" Width="100" Height="30"/>-->
-                <ListView Margin="10" ItemsSource="{Binding ElementName=mainViewWin, Path=DataContext.ViolationSummaryCollection, UpdateSourceTrigger=PropertyChanged}" Height="250">
+                <ListView Margin="10" VerticalAlignment="Top" ItemsSource="{Binding ElementName=mainViewWin, Path=DataContext.ViolationSummaryCollection, UpdateSourceTrigger=PropertyChanged}" MaxHeight="400">
                     <ListView.View>
                         <GridView>
                             <GridViewColumn Header="Statistic" Width="200" DisplayMemberBinding="{Binding SummaryName, UpdateSourceTrigger=PropertyChanged}">
@@ -165,7 +165,7 @@
                     </FlowDocument>
                 </FlowDocumentReader>-->
                 <!--<GridSplitter Grid.Column="1" Width="5" Height="350"/>-->
-                <TabControl Grid.Column="0" Grid.ColumnSpan="3" Height="350">
+                <TabControl Grid.Column="0" Grid.ColumnSpan="3" Height="400">
                     <TabItem Header="Violations Details">
                         <ListView ItemsSource="{Binding NameRuleErrors, UpdateSourceTrigger=PropertyChanged}">
                             <ListView.View>
@@ -190,8 +190,8 @@
 
                     <TabItem Header="Extracted Interface">
                         <UniformGrid Columns="2">
-                            <Border BorderBrush="Black" BorderThickness="2">
-                                <FlowDocumentReader Background="LightGray" Width="580" Height="300" Margin="10">
+                            <Border BorderBrush="DarkGray" BorderThickness="1" Margin="5" Background="LightGreen">
+                                <FlowDocumentReader Background="LightGray" Width="580" Height="290" Margin="10" ToolTip="Original Code" Cursor="Hand">
                                     <FlowDocument>
                                         <Paragraph>
                                             <Run Text="{Binding ElementName=mainViewWin,Path=DataContext.OrigCodeString, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}" />
@@ -199,9 +199,9 @@
                                     </FlowDocument>
                                 </FlowDocumentReader>
                             </Border>
-                            <Border BorderBrush="Black" BorderThickness="2">
-                                <FlowDocumentReader Background="LightGray" Width="580" Height="300" Margin="10">
-                                    <FlowDocument Background="LightCoral">
+                            <Border BorderBrush="DarkGray" BorderThickness="1" Margin="5" Background="LightSkyBlue">
+                                <FlowDocumentReader Background="LightGray" Width="580" Height="290" Margin="10" ToolTip="Extracted interface" Cursor="Hand">
+                                    <FlowDocument>
                                         <Paragraph>
                                             <Run x:Name="run" Text="{Binding Path=GeneratedInterfaceString}" />
                                         </Paragraph>

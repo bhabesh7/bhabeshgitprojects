@@ -1,14 +1,17 @@
 ﻿using Accord.DataModel;
 using Accord.Interfaces;
 using LiveCharts;
+using LiveCharts.Wpf;
 using Prism.Commands;
 using Prism.Mvvm;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Input;
 
 namespace Accord.MainApp
@@ -305,8 +308,11 @@ namespace Accord.MainApp
                 InitializePieChartProperties();
                 //OrigCodeString = string.Empty;
 
-                if (string.IsNullOrEmpty(CodeRootLocation))
+                
+
+                if (string.IsNullOrEmpty(CodeRootLocation) || !Directory.Exists(CodeRootLocation))
                 {
+                    MessageBox.Show("Incorrect or empty source code directory provided.", "Path Error");
                     return;
                 }
                
@@ -319,7 +325,12 @@ namespace Accord.MainApp
             AnalyzeCommand = new DelegateCommand(() =>
             {
                 var selectedFilesForAnalysis = SourceCodeFilesCollection.Where((x) => x.IsChecked == true).ToList();
-                //OutputText = _analysisManager.RunAnalysis(InputText);
+
+                if (selectedFilesForAnalysis?.Count == 0)
+                {
+                    MessageBox.Show("No source files found for analysis.", "Cannot proceed analysis");
+                    return;
+                }
 
                 foreach (var codeFile in selectedFilesForAnalysis)
                 {

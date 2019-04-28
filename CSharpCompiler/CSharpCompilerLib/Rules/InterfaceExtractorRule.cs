@@ -375,7 +375,7 @@ namespace CSharpCompilerLib.Rules
         /// Check Field Rule
         /// </summary>
         /// <param name="propOrFieldName"></param>
-        /// <param name="accessMod"></param>
+        /// <param name="accessMod"></param>        
         private void CheckFieldRuleAndUpdateErrorList(string propOrFieldName, string accessMod)
         {
             string currentRegexString = string.Empty;
@@ -397,6 +397,8 @@ namespace CSharpCompilerLib.Rules
                     currentRegexString = RegexConstants.PublicPropertyRegex;
                     break;
                 default:
+                    currentRegexString = RegexConstants.PrivatePropertyRegex;
+                    violation = NameRuleViolations.PrivateFieldNameRuleViolation;
                     break;
             }
 
