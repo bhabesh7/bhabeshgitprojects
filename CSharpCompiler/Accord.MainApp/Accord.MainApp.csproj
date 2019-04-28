@@ -77,6 +77,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Libs\PRISM\Unity.Abstractions.dll</HintPath>
     </Reference>
+    <Reference Include="Unity.Container">
+      <HintPath>..\Libs\PRISM\Unity.Container.dll</HintPath>
+    </Reference>
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
