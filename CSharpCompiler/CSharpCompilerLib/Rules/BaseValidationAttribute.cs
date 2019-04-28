@@ -50,7 +50,7 @@ namespace CSharpCompilerLib.Rules
             var match = Regex.Match(item, ValidationRegexPattern);
             if (match.Length < item.Length)
             {
-                return new NameRuleError(NameRuleViolationInstance, _currentNamespaceName, _className, _currentMethodName, _parameterName);
+                return new NameRuleError(NameRuleViolationInstance, _currentNamespaceName, _className, _currentMethodName, _parameterName, _propertyOrFieldName);
             }
             return default(NameRuleError);
         }

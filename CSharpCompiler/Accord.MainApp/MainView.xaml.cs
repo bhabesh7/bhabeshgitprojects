@@ -1,4 +1,5 @@
-﻿using System;
+﻿using LiveCharts.Wpf;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -24,5 +25,25 @@ namespace Accord.MainApp
         {
             InitializeComponent();
         }
+
+        private void PieChart_DataClick(object sender, LiveCharts.ChartPoint chartpoint)
+        {
+            try
+            {
+                var chart = (LiveCharts.Wpf.PieChart)chartpoint.ChartView;
+
+                //clear selected slice.
+                foreach (PieSeries series in chart.Series)
+                    series.PushOut = 0;
+
+                var selectedSeries = (PieSeries)chartpoint.SeriesView;
+                selectedSeries.PushOut = 8;
+            }
+            catch (Exception)
+            {                
+            }
+        }
+
     }
 }
+

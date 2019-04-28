@@ -57,7 +57,7 @@ namespace CSharpCompilerLib.Rules
         {
             if(item.Length > MaxLenth)
             {
-                return new NameRuleError(NameRuleViolations.NameLengthExceededRuleViolation, _currentNamespaceName, _className, _currentMethodName, _parameterName);
+                return new NameRuleError(NameRuleViolations.NameLengthExceededRuleViolation, _currentNamespaceName, _className, _currentMethodName, _parameterName, _propertyOrFieldName);
             }
             return default(NameRuleError);
         }

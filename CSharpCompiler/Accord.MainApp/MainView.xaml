@@ -7,6 +7,7 @@
         xmlns:conv="clr-namespace:Accord.MainApp.Converters"
         xmlns:pri="http://www.codeplex.com/prism"
         pri:ViewModelLocator.AutoWireViewModel="True"
+        xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
         mc:Ignorable="d"
         Title="MainView" WindowState="Maximized"  x:Name="mainViewWin">
 
@@ -87,18 +88,50 @@
 
 
         <TabControl Margin="5" Grid.Row="1" Grid.Column="1">
-            <TabItem Header="Violations Summary">
+            <TabItem Header="Violation Distribution">
+                <!--<StackPanel Orientation="Vertical" Margin="5">
+                    -->
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                        <Label Content="Total Violations" Margin="5" FontSize="14" Foreground="Red"/>
+                        <Label Content="{Binding TotalViolationsCount, UpdateSourceTrigger=PropertyChanged}" Margin="5" FontSize="14" Foreground="Red"/>
+                    </StackPanel>
+                    
+                    <lvc:PieChart Grid.Row="1" DataContext="{Binding ElementName=mainViewWin, Path=DataContext}" LegendLocation="Bottom" Hoverable="False" DataClick="PieChart_DataClick">
+                        <lvc:PieChart.Series>
+                            <lvc:PieSeries Title="Namespace" Values="{Binding NamespaceNameViolationsChartValue}" DataLabels="True" LabelPoint="{Binding PointLabel}"/>
+                            <lvc:PieSeries Title="Class" Values="{Binding ClassNameViolationsChartValue}" DataLabels="True" LabelPoint="{Binding PointLabel}"/>
+                            <lvc:PieSeries Title="Method" Values="{Binding MethodNameViolationsChartValue}" DataLabels="True" LabelPoint="{Binding PointLabel}"/>
+                            <lvc:PieSeries Title="Parameter" Values="{Binding ParameterNameViolationsChartValue}" DataLabels="True" LabelPoint="{Binding PointLabel}"/>
+                            <lvc:PieSeries Title="Public Prop" Values="{Binding PublicPropertyNameViolationsChartValue}" DataLabels="True" LabelPoint="{Binding PointLabel}"/>
+                            <lvc:PieSeries Title="Protected Prop" Values="{Binding ProtectedPropertyNameViolationsChartValue}" DataLabels="True" LabelPoint="{Binding PointLabel}"/>
+                            <lvc:PieSeries Title="Private Prop" Values="{Binding PrivatePropertyNameViolationsChartValue}" DataLabels="True" LabelPoint="{Binding PointLabel}"/>
+                            <lvc:PieSeries Title="Public Field" Values="{Binding PublicFieldNameViolationsChartValue}" DataLabels="True" LabelPoint="{Binding PointLabel}"/>
+                            <lvc:PieSeries Title="Protected Field" Values="{Binding ProtectedFieldNameViolationsChartValue}" DataLabels="True" LabelPoint="{Binding PointLabel}"/>
+                            <lvc:PieSeries Title="Private Field" Values="{Binding PrivateFieldNameViolationsChartValue}" DataLabels="True" LabelPoint="{Binding PointLabel}"/>
+                            <lvc:PieSeries Title="Large Method" Values="{Binding LargeMethodViolationsChartValue}" DataLabels="True" LabelPoint="{Binding PointLabel}"/>
+
+                        </lvc:PieChart.Series>
+                    </lvc:PieChart>
+                </Grid>
+            </TabItem>
+            <TabItem Header="Violation Details">
                 <!--<StackPanel Orientation="Vertical">-->
-                    <!--<Button Margin="10" Command="{Binding ElementName=mainViewWin, Path=DataContext.ViolationSummaryCommand}" Content="Get Summary" Width="100" Height="30"/>-->
-                    <ListView Margin="10" ItemsSource="{Binding ElementName=mainViewWin, Path=DataContext.ViolationSummaryCollection, UpdateSourceTrigger=PropertyChanged}" Height="250">
-                        <ListView.View>
-                            <GridView>
-                                <GridViewColumn Header="Statistic" Width="200" DisplayMemberBinding="{Binding SummaryName, UpdateSourceTrigger=PropertyChanged}">
-                                </GridViewColumn>
-                                <GridViewColumn Header="Count" Width="100" DisplayMemberBinding="{Binding SummaryCount, UpdateSourceTrigger=PropertyChanged}" />
-                            </GridView>
-                        </ListView.View>
-                    </ListView>
+                <!--<Button Margin="10" Command="{Binding ElementName=mainViewWin, Path=DataContext.ViolationSummaryCommand}" Content="Get Summary" Width="100" Height="30"/>-->
+                <ListView Margin="10" ItemsSource="{Binding ElementName=mainViewWin, Path=DataContext.ViolationSummaryCollection, UpdateSourceTrigger=PropertyChanged}" Height="250">
+                    <ListView.View>
+                        <GridView>
+                            <GridViewColumn Header="Statistic" Width="200" DisplayMemberBinding="{Binding SummaryName, UpdateSourceTrigger=PropertyChanged}">
+                            </GridViewColumn>
+                            <GridViewColumn Header="Count" Width="100" DisplayMemberBinding="{Binding SummaryCount, UpdateSourceTrigger=PropertyChanged}" />
+                        </GridView>
+                    </ListView.View>
+                </ListView>
                 <!--</StackPanel>-->
             </TabItem>
         </TabControl>
@@ -148,12 +181,13 @@
                                     <GridViewColumn Header="ClassName" Width="100" DisplayMemberBinding="{Binding ClassName, UpdateSourceTrigger=PropertyChanged}" />
                                     <GridViewColumn Header="Method" Width="100" DisplayMemberBinding="{Binding Method, UpdateSourceTrigger=PropertyChanged}" />
                                     <GridViewColumn Header="Param" Width="100" DisplayMemberBinding="{Binding Parameter, UpdateSourceTrigger=PropertyChanged}" />
+                                    <GridViewColumn Header="PropOrField" Width="100" DisplayMemberBinding="{Binding PropOrField, UpdateSourceTrigger=PropertyChanged}" />
 
                                 </GridView>
                             </ListView.View>
                         </ListView>
                     </TabItem>
-                 
+
                     <TabItem Header="Extracted Interface">
                         <UniformGrid Columns="2">
                             <Border BorderBrush="Black" BorderThickness="2">

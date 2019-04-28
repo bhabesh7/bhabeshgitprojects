@@ -78,21 +78,30 @@ namespace Accord.DataModel
                 RaisePropertyChanged(nameof(Parameter));
             }
         }
-                
 
-        public string Suggestion
+        private string _propOrField;
+
+        public string PropOrField
         {
-            get { return GetSuggestion(); }            
+            get { return _propOrField; }
+            set { _propOrField = value; RaisePropertyChanged(nameof(PropOrField)); }
         }
 
 
-        public NameRuleError(NameRuleViolations violation, string nameSpace, string className, string method, string parameter)
+        public string Suggestion
+        {
+            get { return GetSuggestion(); }
+        }
+
+
+        public NameRuleError(NameRuleViolations violation, string nameSpace, string className, string method, string parameter, string propOrField)
         {
             Violation = violation;
             NameSpace = nameSpace;
             ClassName = className;
             Method = method;
             Parameter = parameter;
+            PropOrField = propOrField;
         }
 
         public virtual string GetErrorMessage()

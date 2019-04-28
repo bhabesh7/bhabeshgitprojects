@@ -76,7 +76,7 @@ namespace CSharpCompilerLib.Rules
             var match = Regex.Match(_currentNamespace, RegexConstants.PascalCaseNamespaceRegex);
             if (match.Length < _currentNamespace.Length)
             {
-                _nameRuleErrorsList.Add(new NameRuleError(NameRuleViolations.NamespaceRuleViolation, _currentNamespace, string.Empty, string.Empty, string.Empty));
+                _nameRuleErrorsList.Add(new NameRuleError(NameRuleViolations.NamespaceRuleViolation, _currentNamespace, string.Empty, string.Empty, string.Empty, string.Empty));
             }            
             
             var currentNamespace = _tokenStream.GetText(id.Start, id.Stop);
@@ -403,7 +403,7 @@ namespace CSharpCompilerLib.Rules
             var match = Regex.Match(propOrFieldName, currentRegexString);
             if (match.Length < propOrFieldName.Length)
             {
-                _nameRuleErrorsList?.Add(new NameRuleError(violation, _currentNamespace, _currentClassName, string.Empty, propOrFieldName));
+                _nameRuleErrorsList?.Add(new NameRuleError(violation, _currentNamespace, _currentClassName, string.Empty, string.Empty, propOrFieldName));
             }
         }
 
@@ -414,7 +414,7 @@ namespace CSharpCompilerLib.Rules
             var lines = body.Split('\n').Length;
             if (lines > 50)
             {
-                _nameRuleErrorsList?.Add(new NameRuleError(NameRuleViolations.LargeMethodBodyRuleViolation, _currentNamespace, _currentClassName, _currentMethodName, string.Empty));
+                _nameRuleErrorsList?.Add(new NameRuleError(NameRuleViolations.LargeMethodBodyRuleViolation, _currentNamespace, _currentClassName, _currentMethodName, string.Empty, string.Empty));
             }
 
         }

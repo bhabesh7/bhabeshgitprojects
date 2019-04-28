@@ -1,5 +1,6 @@
 ﻿using Accord.DataModel;
 using Accord.Interfaces;
+using LiveCharts;
 using Prism.Commands;
 using Prism.Mvvm;
 using System;
@@ -17,6 +18,10 @@ namespace Accord.MainApp
         IFolderScanner _folderScanner;
         ICodeParser _codeParser;
         IAnalysisManager _analysisManager;
+
+        public Func<ChartPoint, string> PointLabel { get; set; }
+
+
 
         private ICommand _violationSummaryCommand;
 
@@ -112,6 +117,146 @@ namespace Accord.MainApp
 
         public ObservableCollection<SummaryData> ViolationSummaryCollection { get; set; }
 
+        #region PieChart Properties
+        private ChartValues<int> _namespaceNameViolationsChartValue;
+
+        public ChartValues<int> NamespaceNameViolationsChartValue
+        {
+            get { return _namespaceNameViolationsChartValue; }
+            set
+            {
+                _namespaceNameViolationsChartValue = value;
+                RaisePropertyChanged(nameof(NamespaceNameViolationsChartValue));
+            }
+        }
+
+        private ChartValues<int> _classNameViolationsChartValue;
+
+        public ChartValues<int> ClassNameViolationsChartValue
+        {
+            get { return _classNameViolationsChartValue; }
+            set { _classNameViolationsChartValue = value; RaisePropertyChanged(nameof(ClassNameViolationsChartValue)); }
+        }
+
+        private ChartValues<int> _methodNameViolationsChartValue;
+
+        public ChartValues<int> MethodNameViolationsChartValue
+        {
+            get { return _methodNameViolationsChartValue; }
+            set { _methodNameViolationsChartValue = value; RaisePropertyChanged(nameof(MethodNameViolationsChartValue)); }
+        }
+
+        private ChartValues<int> _parameterNameViolationsChartValue;
+
+        public ChartValues<int> ParameterNameViolationsChartValue
+        {
+            get { return _parameterNameViolationsChartValue; }
+            set { _parameterNameViolationsChartValue = value; RaisePropertyChanged(nameof(ParameterNameViolationsChartValue)); }
+        }
+
+
+        private ChartValues<int> _privatePropertyNameViolationsChartValue;
+
+        public ChartValues<int> PrivatePropertyNameViolationsChartValue
+        {
+            get { return _privatePropertyNameViolationsChartValue; }
+            set
+            {
+                _privatePropertyNameViolationsChartValue = value;
+                RaisePropertyChanged(nameof(PrivatePropertyNameViolationsChartValue));
+            }
+        }
+
+        private ChartValues<int> _protectedPropertyNameViolationsChartValue;
+
+        public ChartValues<int> ProtectedPropertyNameViolationsChartValue
+        {
+            get { return _protectedPropertyNameViolationsChartValue; }
+            set
+            {
+                _protectedPropertyNameViolationsChartValue = value;
+                RaisePropertyChanged(nameof(ProtectedPropertyNameViolationsChartValue));
+            }
+        }
+
+
+
+        private ChartValues<int> _publicPropertyNameViolationsChartValue;
+
+        public ChartValues<int> PublicPropertyNameViolationsChartValue
+        {
+            get { return _publicPropertyNameViolationsChartValue; }
+            set
+            {
+                _publicPropertyNameViolationsChartValue = value;
+                RaisePropertyChanged(nameof(PublicPropertyNameViolationsChartValue));
+            }
+        }
+
+        private ChartValues<int> _privateFieldNameViolationsChartValue;
+
+        public ChartValues<int> PrivateFieldNameViolationsChartValue
+        {
+            get { return _privateFieldNameViolationsChartValue; }
+            set
+            {
+                _privateFieldNameViolationsChartValue = value;
+                RaisePropertyChanged(nameof(PrivateFieldNameViolationsChartValue));
+            }
+        }
+
+        private ChartValues<int> _protectedFieldNameViolationsChartValue;
+
+        public ChartValues<int> ProtectedFieldNameViolationsChartValue
+        {
+            get { return _protectedFieldNameViolationsChartValue; }
+            set
+            {
+                _protectedFieldNameViolationsChartValue = value;
+                RaisePropertyChanged(nameof(ProtectedFieldNameViolationsChartValue));
+            }
+        }
+
+        private ChartValues<int> _publicFieldNameViolationsChartValue;
+
+        public ChartValues<int> PublicFieldNameViolationsChartValue
+        {
+            get { return _publicFieldNameViolationsChartValue; }
+            set
+            {
+                _publicFieldNameViolationsChartValue = value;
+                RaisePropertyChanged(nameof(PublicFieldNameViolationsChartValue));
+            }
+        }
+
+        private ChartValues<int> _largeMethodViolationsChartValue;
+
+        public ChartValues<int> LargeMethodViolationsChartValue
+        {
+            get { return _largeMethodViolationsChartValue; }
+            set
+            {
+                _largeMethodViolationsChartValue = value;
+                RaisePropertyChanged(nameof(LargeMethodViolationsChartValue));
+            }
+        }
+
+        private int _totalViolationsCount;
+
+        public int TotalViolationsCount
+        {
+            get { return _totalViolationsCount; }
+            set
+            {
+                _totalViolationsCount = value;
+                RaisePropertyChanged(nameof(TotalViolationsCount));
+            }
+        }
+
+
+        #endregion Piechart properties
+
+
         public MainViewModel(IFolderScanner folderScanner, ICodeParser codeParser, IAnalysisManager analysisManager)
         {
             _folderScanner = folderScanner;
@@ -121,28 +266,50 @@ namespace Accord.MainApp
             ViolationSummaryCollection = new ObservableCollection<SummaryData>();
             CodeRootLocation = @"b:\samplefile";
             InitializeCommands();
+            PointLabel = chartPoint =>
+               string.Format("{0} ({1:P})", chartPoint.Y, chartPoint.Participation);
+            InitializePieChartProperties();
+        }
+
+        private void InitializePieChartProperties()
+        {
+            NamespaceNameViolationsChartValue = new ChartValues<int> { 0 };
+            ClassNameViolationsChartValue = new ChartValues<int> { 0 };
+            MethodNameViolationsChartValue = new ChartValues<int> { 0 };
+            ParameterNameViolationsChartValue = new ChartValues<int> { 0 };
+
+            PublicPropertyNameViolationsChartValue = new ChartValues<int> { 0 };
+            ProtectedPropertyNameViolationsChartValue = new ChartValues<int> { 0 };
+            PrivatePropertyNameViolationsChartValue = new ChartValues<int> { 0 };
+
+            PublicFieldNameViolationsChartValue = new ChartValues<int> { 0 };
+            ProtectedFieldNameViolationsChartValue = new ChartValues<int> { 0 };
+            PrivateFieldNameViolationsChartValue = new ChartValues<int> { 0 };
+            LargeMethodViolationsChartValue = new ChartValues<int> { 0 };
+            TotalViolationsCount = 0;
         }
 
         private void InitializeCommands()
         {
             ViolationSummaryCommand = new DelegateCommand(() =>
             {
-                PrepareViolationsSummary();
+                PrepareViolationsSummaryAndChartData();
 
             });
 
             LoadCodeCommand = new DelegateCommand(() =>
-            {
-                //OpenFileDialog
-
-                //OrigCodeString = string.Empty;
-                SelectedSourceCodeFile = null;
+            {                
+                SelectedSourceCodeFile = default(DocumentData);
                 SourceCodeFilesCollection?.Clear();
+                ViolationSummaryCollection?.Clear();
+                InitializePieChartProperties();
+                //OrigCodeString = string.Empty;
+
                 if (string.IsNullOrEmpty(CodeRootLocation))
                 {
                     return;
                 }
-
+               
                 var documentDataList = _folderScanner.GetFileListWithFullPath(CodeRootLocation).Where((x) => x != null).ToList<DocumentData>();
 
                 SourceCodeFilesCollection.Clear();
@@ -167,11 +334,14 @@ namespace Accord.MainApp
                     //codeFile.OrigString = codeString;
                 }
 
-                PrepareViolationsSummary();
+                PrepareViolationsSummaryAndChartData();
             });
         }
 
-        private void PrepareViolationsSummary()
+        /// <summary>
+        /// 
+        /// </summary>
+        private void PrepareViolationsSummaryAndChartData()
         {
             if (SourceCodeFilesCollection == null || SourceCodeFilesCollection?.Count == 0) { return; }
 
@@ -191,59 +361,67 @@ namespace Accord.MainApp
             var ngCodeFilesCount = ngCodeFiles.Count;
             ViolationSummaryCollection.Add(new SummaryData { SummaryName = "NG Code File Count", SummaryCount = ngCodeFilesCount });
             var totalNGDetected = ngCodeFiles.Where((y) => y.AnalysisResultDataInstance?.NameRuleErrors.Count > 0).ToList();
-            //ViolationSummaryCollection.Add(new SummaryData { SummaryName = "Total Violation Count", SummaryCount = totalNGDetected.Count });
+            ViolationSummaryCollection.Add(new SummaryData { SummaryName = "Total Violations Count", SummaryCount = totalNGDetected.Count });
+            TotalViolationsCount = totalNGDetected.Count;
 
-            var classViolations = totalNGDetected.Count((x) => x.AnalysisResultDataInstance.NameRuleErrors.
+            var classNameViolationsCount = totalNGDetected.Count((x) => x.AnalysisResultDataInstance.NameRuleErrors.
             Any((y) => y.Violation == NameRuleViolations.ClassNameRuleViolation));
-            ViolationSummaryCollection.Add(new SummaryData { SummaryName = "Class Violations", SummaryCount = classViolations });
+            ViolationSummaryCollection.Add(new SummaryData { SummaryName = "Class Violations", SummaryCount = classNameViolationsCount });
+            ClassNameViolationsChartValue = new ChartValues<int> { classNameViolationsCount };
 
-            var methViolationsCount = totalNGDetected.Count((x) => x.AnalysisResultDataInstance.NameRuleErrors.
+
+            var methodNameViolationsCount = totalNGDetected.Count((x) => x.AnalysisResultDataInstance.NameRuleErrors.
            Any((y) => y.Violation == NameRuleViolations.MethodNameRuleViolation));
+            ViolationSummaryCollection.Add(new SummaryData { SummaryName = "Method Violations", SummaryCount = methodNameViolationsCount });
+            MethodNameViolationsChartValue = new ChartValues<int> { methodNameViolationsCount };
 
-            ViolationSummaryCollection.Add(new SummaryData { SummaryName = "Method Violations", SummaryCount = methViolationsCount });
+            var namespaceNameViolationsCount = totalNGDetected.Count((x) => x.AnalysisResultDataInstance.NameRuleErrors.
+           Any((y) => y.Violation == NameRuleViolations.NamespaceRuleViolation));
+            ViolationSummaryCollection.Add(new SummaryData { SummaryName = "Namespace Violations", SummaryCount = namespaceNameViolationsCount });
+            NamespaceNameViolationsChartValue = new ChartValues<int> { namespaceNameViolationsCount };
 
-            var nsViolationsCount = totalNGDetected.Count((x) => x.AnalysisResultDataInstance.NameRuleErrors.
-          Any((y) => y.Violation == NameRuleViolations.NamespaceRuleViolation));
-            ViolationSummaryCollection.Add(new SummaryData { SummaryName = "Namespace Violations", SummaryCount = nsViolationsCount });
 
-
-            var paramViolationsCount = totalNGDetected.Count((x) => x.AnalysisResultDataInstance.NameRuleErrors.
+            var parameterNameViolations = totalNGDetected.Count((x) => x.AnalysisResultDataInstance.NameRuleErrors.
           Any((y) => y.Violation == NameRuleViolations.ParameterNameRuleViolation));
-
-            ViolationSummaryCollection.Add(new SummaryData { SummaryName = "Parameter Violations", SummaryCount = paramViolationsCount });
-
+            ViolationSummaryCollection.Add(new SummaryData { SummaryName = "Parameter Violations", SummaryCount = parameterNameViolations });
+            ParameterNameViolationsChartValue = new ChartValues<int> { parameterNameViolations };
 
             var privFieldViolationsCount = totalNGDetected.Count((x) => x.AnalysisResultDataInstance.NameRuleErrors.
           Any((y) => y.Violation == NameRuleViolations.PrivateFieldNameRuleViolation));
 
             ViolationSummaryCollection.Add(new SummaryData { SummaryName = "Private Field Violations", SummaryCount = privFieldViolationsCount });
-
+            PrivateFieldNameViolationsChartValue = new ChartValues<int> { privFieldViolationsCount };
 
             var protFieldViolationsCount = totalNGDetected.Count((x) => x.AnalysisResultDataInstance.NameRuleErrors.
           Any((y) => y.Violation == NameRuleViolations.ProtectedFieldNameRuleViolation));
-
             ViolationSummaryCollection.Add(new SummaryData { SummaryName = "Protected Field Violations", SummaryCount = protFieldViolationsCount });
-
+            ProtectedFieldNameViolationsChartValue = new ChartValues<int> { protFieldViolationsCount };
 
             var pubFieldViolationsCount = totalNGDetected.Count((x) => x.AnalysisResultDataInstance.NameRuleErrors.
           Any((y) => y.Violation == NameRuleViolations.PublicFieldNameRuleViolation));
-
             ViolationSummaryCollection.Add(new SummaryData { SummaryName = "Public Field Violations", SummaryCount = pubFieldViolationsCount });
-
+            PublicFieldNameViolationsChartValue = new ChartValues<int> { pubFieldViolationsCount };
 
             var privPropViolationsCount = totalNGDetected.Count((x) => x.AnalysisResultDataInstance.NameRuleErrors.
         Any((y) => y.Violation == NameRuleViolations.PrivatePropertyNameRuleViolation));
-
             ViolationSummaryCollection.Add(new SummaryData { SummaryName = "Private Property Violations", SummaryCount = privPropViolationsCount });
-
+            PrivatePropertyNameViolationsChartValue = new ChartValues<int> { privPropViolationsCount };
 
             var protPropViolationsCount = totalNGDetected.Count((x) => x.AnalysisResultDataInstance.NameRuleErrors.
     Any((y) => y.Violation == NameRuleViolations.ProtectedPropertyNameRuleViolation));
             ViolationSummaryCollection.Add(new SummaryData { SummaryName = "Protected Property Violations", SummaryCount = protPropViolationsCount });
+            ProtectedPropertyNameViolationsChartValue = new ChartValues<int> { protPropViolationsCount };
 
             var pubPropViolationsCount = totalNGDetected.Count((x) => x.AnalysisResultDataInstance.NameRuleErrors.
     Any((y) => y.Violation == NameRuleViolations.PublicPropertyNameRuleViolation));
             ViolationSummaryCollection.Add(new SummaryData { SummaryName = "Public Property Violations", SummaryCount = pubPropViolationsCount });
+            PublicPropertyNameViolationsChartValue = new ChartValues<int> { pubPropViolationsCount };
+
+            var largeMethodBodyViolationsCount = totalNGDetected.Count((x) => x.AnalysisResultDataInstance.NameRuleErrors.
+    Any((y) => y.Violation == NameRuleViolations.LargeMethodBodyRuleViolation));
+            ViolationSummaryCollection.Add(new SummaryData { SummaryName = "Large Method Body Violations", SummaryCount = largeMethodBodyViolationsCount });
+            LargeMethodViolationsChartValue = new ChartValues<int> { largeMethodBodyViolationsCount };
+
         }
     }
 }
