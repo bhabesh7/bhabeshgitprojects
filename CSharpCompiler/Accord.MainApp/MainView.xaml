@@ -10,7 +10,8 @@
         xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
         mc:Ignorable="d"
         Title="Code Accord by Bhabesh Acharya" WindowState="Maximized"  x:Name="mainViewWin">
-
+    <!--<div>Icons made by <a href="https://www.flaticon.com/authors/smashicons" title="Smashicons">Smashicons</a> from <a href="https://www.flaticon.com/" 		    title="Flaticon">www.flaticon.com</a> is licensed by <a href="http://creativecommons.org/licenses/by/3.0/" 
+    title="Creative Commons BY 3.0" target="_blank">CC 3.0 BY</a></div>-->
     <Grid>
         <Grid.Resources>
             <conv:AnalysisStatusToColorConverter x:Key="colorConv"/>
@@ -30,7 +31,7 @@
         <Button Content="Build" Margin="5" Grid.Row="1" HorizontalAlignment="Right" Grid.Column="0" Height="35" Width="100" Command="{Binding BuildCommand}"/>
         <TextBox IsReadOnly="True" Margin="5" Grid.Row="2" Grid.Column="0" Width="{Binding ElementName=win, Path=ActualWidth}"  Height="150"
                  Text="{Binding OutputText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/> -->
-        <TextBox Text="{Binding CodeRootLocation, UpdateSourceTrigger=PropertyChanged}" Margin="0,5,0.4,5" Width="{Binding ElementName=codeLV, Path=ActualWidth}">
+        <TextBox IsReadOnly="True" Text="{Binding CodeRootLocation, UpdateSourceTrigger=PropertyChanged}" Margin="0,5,0.4,5" Width="{Binding ElementName=codeLV, Path=ActualWidth}">
             <TextBox.Resources>
                 <Style TargetType="{x:Type TextBox}">
                     <Setter Property="Width" Value="120"/>
@@ -40,22 +41,75 @@
             </TextBox.Resources>
         </TextBox>
 
-        <UniformGrid Columns="2" Grid.Column="1">
-            <Button Content="Load" Command="{Binding LoadCodeCommand}" >
+        <UniformGrid Columns="3" Grid.Column="1">
+            <Button ToolTip="Select Source Code Root Folder" Command="{Binding BrowseCommand}" >
                 <Button.Resources>
                     <Style TargetType="{x:Type Button}">
                         <Setter Property="Margin" Value="5"/>
-                        <Setter Property="Width" Value="120"/>
-                        <Setter Property="Height" Value="30"/>
+                        <Setter Property="Background" Value="Transparent"/>
+                        <Setter Property="Width" Value="60"/>
+                        <Setter Property="Height" Value="40"/>
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate>
+                                    <Image Source="Images/folder.png"></Image>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                        <Style.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Height" Value="35"/>
+                                <Setter Property="BorderBrush" Value="LightBlue"/>
+                            </Trigger>
+                        </Style.Triggers>
                     </Style>
                 </Button.Resources>
             </Button>
-            <Button Content="Analyze" Command="{Binding AnalyzeCommand}">
+            <Button Command="{Binding LoadCodeCommand}" ToolTip="Discover Source Code files">
                 <Button.Resources>
                     <Style TargetType="{x:Type Button}">
                         <Setter Property="Margin" Value="5"/>
-                        <Setter Property="Width" Value="120"/>
-                        <Setter Property="Height" Value="30"/>
+                        <Setter Property="Background" Value="Transparent"/>
+                        <Setter Property="Width" Value="60"/>
+                        <Setter Property="Height" Value="40"/>
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate>
+                                    <Image Source="Images/code.png"></Image>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                        <Style.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Height" Value="35"/>
+                                <Setter Property="BorderBrush" Value="LightBlue"/>
+                            </Trigger>
+                        </Style.Triggers>
+                        
+                    </Style>
+
+                </Button.Resources>
+            </Button>
+            <Button ToolTip="Analyze Selected Source Files" Command="{Binding AnalyzeCommand}">
+                <Button.Resources>
+                    <Style TargetType="{x:Type Button}">
+                        <Setter Property="Margin" Value="5"/>
+                        <Setter Property="Background" Value="Transparent"/>
+                        <Setter Property="Width" Value="60"/>
+                        <Setter Property="Height" Value="40"/>
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate>
+                                    <Image Source="Images/analyze.png"></Image>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                        <Style.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Height" Value="35"/>
+                                <Setter Property="BorderBrush" Value="LightBlue"/>
+                            </Trigger>
+                        </Style.Triggers>
                     </Style>
                 </Button.Resources>
             </Button>
@@ -101,7 +155,7 @@
                         <Label Content="Total Violations" Margin="5" FontSize="14" Foreground="Red"/>
                         <Label Content="{Binding TotalViolationsCount, UpdateSourceTrigger=PropertyChanged}" Margin="5" FontSize="14" Foreground="Red"/>
                     </StackPanel>
-                    
+
                     <lvc:PieChart Grid.Row="1" DataContext="{Binding ElementName=mainViewWin, Path=DataContext}" LegendLocation="Bottom" Hoverable="False" DataClick="PieChart_DataClick">
                         <lvc:PieChart.Series>
                             <lvc:PieSeries Title="Namespace" Values="{Binding NamespaceNameViolationsChartValue}" DataLabels="True" LabelPoint="{Binding PointLabel}"/>

@@ -39,6 +39,15 @@ namespace Accord.MainApp
         }
 
 
+        private ICommand _browseCommand;
+
+        public ICommand BrowseCommand
+        {
+            get { return _browseCommand; }
+            set { _browseCommand = value; RaisePropertyChanged(nameof(BrowseCommand)); }
+        }
+
+
         private ICommand analyzeCommand;
 
         public ICommand AnalyzeCommand
@@ -267,7 +276,7 @@ namespace Accord.MainApp
             _analysisManager = analysisManager;
             SourceCodeFilesCollection = new ObservableCollection<DocumentData>();
             ViolationSummaryCollection = new ObservableCollection<SummaryData>();
-            CodeRootLocation = @"b:\samplefile";
+            CodeRootLocation = string.Empty;//@"b:\samplefile";
             InitializeCommands();
             PointLabel = chartPoint =>
                string.Format("{0} ({1:P})", chartPoint.Y, chartPoint.Participation);
@@ -294,6 +303,17 @@ namespace Accord.MainApp
 
         private void InitializeCommands()
         {
+            BrowseCommand = new DelegateCommand(() =>
+              {
+                  using (var dialog = new System.Windows.Forms.FolderBrowserDialog())
+                  {
+                      System.Windows.Forms.DialogResult result = dialog.ShowDialog();
+                      if (result == System.Windows.Forms.DialogResult.OK)
+                      {
+                          CodeRootLocation = dialog.SelectedPath;
+                      }
+                  }
+              });
             ViolationSummaryCommand = new DelegateCommand(() =>
             {
                 PrepareViolationsSummaryAndChartData();
@@ -301,21 +321,21 @@ namespace Accord.MainApp
             });
 
             LoadCodeCommand = new DelegateCommand(() =>
-            {                
+            {
                 SelectedSourceCodeFile = default(DocumentData);
                 SourceCodeFilesCollection?.Clear();
                 ViolationSummaryCollection?.Clear();
                 InitializePieChartProperties();
                 //OrigCodeString = string.Empty;
 
-                
+
 
                 if (string.IsNullOrEmpty(CodeRootLocation) || !Directory.Exists(CodeRootLocation))
                 {
                     MessageBox.Show("Incorrect or empty source code directory provided.", "Path Error");
                     return;
                 }
-               
+
                 var documentDataList = _folderScanner.GetFileListWithFullPath(CodeRootLocation).Where((x) => x != null).ToList<DocumentData>();
 
                 SourceCodeFilesCollection.Clear();
