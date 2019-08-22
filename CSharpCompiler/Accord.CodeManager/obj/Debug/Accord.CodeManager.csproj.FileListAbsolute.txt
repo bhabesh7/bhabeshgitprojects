@@ -1,0 +1,11 @@
+B:\GIT\BHABESH7\bhabeshgitprojects\CSharpCompiler\Accord.CodeManager\bin\Debug\Accord.CodeManager.dll
+B:\GIT\BHABESH7\bhabeshgitprojects\CSharpCompiler\Accord.CodeManager\bin\Debug\Accord.CodeManager.pdb
+B:\GIT\BHABESH7\bhabeshgitprojects\CSharpCompiler\Accord.CodeManager\bin\Debug\Accord.DataModel.dll
+B:\GIT\BHABESH7\bhabeshgitprojects\CSharpCompiler\Accord.CodeManager\bin\Debug\Accord.Interfaces.dll
+B:\GIT\BHABESH7\bhabeshgitprojects\CSharpCompiler\Accord.CodeManager\bin\Debug\Prism.dll
+B:\GIT\BHABESH7\bhabeshgitprojects\CSharpCompiler\Accord.CodeManager\bin\Debug\Accord.DataModel.pdb
+B:\GIT\BHABESH7\bhabeshgitprojects\CSharpCompiler\Accord.CodeManager\bin\Debug\Accord.Interfaces.pdb
+B:\GIT\BHABESH7\bhabeshgitprojects\CSharpCompiler\Accord.CodeManager\bin\Debug\Prism.xml
+B:\GIT\BHABESH7\bhabeshgitprojects\CSharpCompiler\Accord.CodeManager\obj\Debug\Accord.CodeManager.csprojResolveAssemblyReference.cache
+B:\GIT\BHABESH7\bhabeshgitprojects\CSharpCompiler\Accord.CodeManager\obj\Debug\Accord.CodeManager.dll
+B:\GIT\BHABESH7\bhabeshgitprojects\CSharpCompiler\Accord.CodeManager\obj\Debug\Accord.CodeManager.pdb

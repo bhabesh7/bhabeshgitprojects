@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <title>What is the weather like ?</title>
+        <link rel="stylesheet" href="https://cdnjs/cloudfare.com/ajax/libs/bulma/0.6.2/css/bulma.css"/>
+    </head>
+
+    <body>
+        <section class="hero is-primary">
+            <div class="hero-body">
+                <div class="container">
+                    <h1 class="title">Weather Today</h1>
+                </div>
+            </div>
+
+            <div class="media-content" style="border: 2px solid gray;background-color: rgb(38, 39, 39);color:white;padding:20px;">
+                <div class= "content">
+                    <p>
+                        <span class="city"> <%=weather.city %> </span> <br>
+                        <span class="temperature"> <%=weather.temperature %> °C</span> <br>                        
+                        <%= weather.description %>
+                        <img src="http://openweathermap.org/img/w/<%=weather.icon%>.png" alt="Image" height="70" width="70"> <br>
+                        <span class="wind">windspeed <%=weather.windspeed%> mps</span>
+                    </p>
+                </div>
+            </div>
+        </section>
+    </body>
+</html>
